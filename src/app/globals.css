@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --hz-primary: #1e40af;
+  --hz-primary-dark: #1e3a8a;
+  --hz-accent: #3b82f6;
+  
+  --compliant: #22c55e;
+  --warning: #f59e0b;
+  --critical: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased;
+}
+
+/* Mapbox overrides */
+.mapboxgl-map {
+  font-family: var(--font-sans) !important;
+}
+
+.mapboxgl-ctrl-geocoder {
+  @apply shadow-lg !important;
+  font-family: var(--font-sans) !important;
+}
+
+.mapboxgl-popup-content {
+  @apply rounded-lg shadow-xl p-4 !important;
+  font-family: var(--font-sans) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+/* Status badge styles */
+@layer components {
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide;
+  }
+  
+  .status-compliant {
+    @apply bg-compliant-light text-compliant-dark;
+  }
+  
+  .status-warning {
+    @apply bg-warning-light text-warning-dark;
+  }
+  
+  .status-critical {
+    @apply bg-critical-light text-critical-dark;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden;
+  }
+  
+  .card-header {
+    @apply px-6 py-4 border-b border-slate-100;
+  }
+  
+  .card-body {
+    @apply p-6;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-hz-500 text-white hover:bg-hz-600 active:bg-hz-700 shadow-sm;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 active:bg-slate-100;
+  }
+  
+  .input {
+    @apply w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400;
+    @apply focus:outline-none focus:ring-2 focus:ring-hz-500/20 focus:border-hz-500;
+    @apply transition-colors duration-200;
+  }
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* HUBZone type colors for map */
+.hubzone-qct {
+  --hubzone-color: #3b82f6;
+}
+
+.hubzone-qnmc {
+  --hubzone-color: #8b5cf6;
+}
+
+.hubzone-dda {
+  --hubzone-color: #06b6d4;
+}
+
+.hubzone-brac {
+  --hubzone-color: #f59e0b;
+}
+
+.hubzone-indian {
+  --hubzone-color: #ec4899;
+}

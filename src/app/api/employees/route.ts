@@ -1,0 +1,130 @@
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { z } from 'zod';
+
+const EmployeeSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  email: z.string().email().optional(),
+  hireDate: z.string().transform((s) => new Date(s)),
+  streetAddress: z.string().min(1),
+  city: z.string().min(1),
+  state: z.string().length(2),
+  zipCode: z.string().min(5),
+  isHubzoneResident: z.boolean().optional(),
+  hubzoneType: z.string().optional(),
+});
+
+// GET /api/employees - List all employees for org
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const orgId = searchParams.get('orgId');
+
+  if (!orgId) {
+    return NextResponse.json(
+      { error: 'Organization ID required' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const employees = await prisma.employee.findMany({
+      where: {
+        organizationId: orgId,
+        isActive: true,
+      },
+      orderBy: { lastName: 'asc' },
+    });
+
+    // Calculate compliance stats
+    const total = employees.length;
+    const hubzoneResidents = employees.filter((e) => e.isHubzoneResident).length;
+    const compliancePercent = total > 0 ? (hubzoneResidents / total) * 100 : 0;
+
+    return NextResponse.json({
+      employees,
+      stats: {
+        total,
+        hubzoneResidents,
+        nonHubzoneResidents: total - hubzoneResidents,
+        compliancePercent,
+        isCompliant: compliancePercent >= 35,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch employees' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST /api/employees - Create new employee
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { orgId, ...employeeData } = body;
+
+    if (!orgId) {
+      return NextResponse.json(
+        { error: 'Organization ID required' },
+        { status: 400 }
+      );
+    }
+
+    const validated = EmployeeSchema.parse(employeeData);
+
+    // Check HUBZone status for the address
+    const addressString = `${validated.streetAddress}, ${validated.city}, ${validated.state} ${validated.zipCode}`;
+    let isHubzoneResident = validated.isHubzoneResident ?? false;
+    let hubzoneType = validated.hubzoneType;
+
+    // Auto-verify if not manually set
+    if (!validated.isHubzoneResident) {
+      try {
+        const lookupResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/hubzone/lookup?address=${encodeURIComponent(addressString)}`
+        );
+        if (lookupResponse.ok) {
+          const lookupData = await lookupResponse.json();
+          isHubzoneResident = lookupData.isHubzone;
+          hubzoneType = lookupData.hubzoneType;
+        }
+      } catch (e) {
+        console.warn('Auto-verification failed:', e);
+      }
+    }
+
+    const employee = await prisma.employee.create({
+      data: {
+        organizationId: orgId,
+        firstName: validated.firstName,
+        lastName: validated.lastName,
+        email: validated.email,
+        hireDate: validated.hireDate,
+        streetAddress: validated.streetAddress,
+        city: validated.city,
+        state: validated.state,
+        zipCode: validated.zipCode,
+        isHubzoneResident,
+        hubzoneType,
+        lastVerified: new Date(),
+      },
+    });
+
+    return NextResponse.json(employee, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
+    }
+    console.error('Error creating employee:', error);
+    return NextResponse.json(
+      { error: 'Failed to create employee' },
+      { status: 500 }
+    );
+  }
+}

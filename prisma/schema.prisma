@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+// Organization managing HUBZone certification
+model Organization {
+  id              String    @id @default(cuid())
+  name            String
+  einNumber       String?   @unique
+  dunsNumber      String?
+  cageCode        String?
+  hubzoneNumber   String?   // SBA HUBZone certification number
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  employees       Employee[]
+  locations       Location[]
+  certifications  Certification[]
+}
+
+// Employee records for residency tracking
+model Employee {
+  id              String    @id @default(cuid())
+  organizationId  String
+  firstName       String
+  lastName        String
+  email           String?
+  hireDate        DateTime
+  isActive        Boolean   @default(true)
+  
+  // Address info
+  streetAddress   String
+  city            String
+  state           String
+  zipCode         String
+  
+  // Computed fields stored for performance
+  isHubzoneResident Boolean  @default(false)
+  hubzoneType       String?  // QCT, QNMC, DDA, etc.
+  lastVerified      DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId])
+  @@index([isHubzoneResident])
+}
+
+// Business locations
+model Location {
+  id              String    @id @default(cuid())
+  organizationId  String
+  name            String
+  isPrincipalOffice Boolean @default(false)
+  
+  streetAddress   String
+  city            String
+  state           String
+  zipCode         String
+  
+  // Geospatial data
+  latitude        Float?
+  longitude       Float?
+  
+  // HUBZone status
+  isInHubzone     Boolean   @default(false)
+  hubzoneType     String?
+  lastVerified    DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId])
+}
+
+// Certification tracking
+model Certification {
+  id              String    @id @default(cuid())
+  organizationId  String
+  
+  status          CertificationStatus @default(PENDING)
+  submittedAt     DateTime?
+  approvedAt      DateTime?
+  expiresAt       DateTime?
+  
+  // Compliance snapshot at time of certification
+  totalEmployees  Int       @default(0)
+  hubzoneResidents Int      @default(0)
+  compliancePercent Float   @default(0)
+  
+  notes           String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId])
+  @@index([status])
+}
+
+enum CertificationStatus {
+  PENDING
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  DENIED
+  EXPIRED
+  RECERTIFICATION_DUE
+}
+
+// HUBZone geographic data (populated from SBA data)
+model HubzoneArea {
+  id              String    @id @default(cuid())
+  geoId           String    @unique
+  name            String
+  state           String
+  hubzoneType     String    // QCT, QNMC, DDA, BRAC, etc.
+  
+  // Census tract or county info
+  tractCode       String?
+  countyFips      String?
+  
+  // Effective dates
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  isActive        Boolean   @default(true)
+  
+  // GeoJSON boundary stored as text (parsed at query time)
+  boundaryGeoJson String?   @db.Text
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([state])
+  @@index([hubzoneType])
+  @@index([isActive])
+}
+
+// Address lookup cache
+model AddressLookupCache {
+  id              String    @id @default(cuid())
+  
+  // Input address (normalized)
+  inputAddress    String    @unique
+  
+  // Geocoded result
+  latitude        Float
+  longitude       Float
+  
+  // HUBZone result
+  isHubzone       Boolean
+  hubzoneType     String?
+  hubzoneAreaId   String?
+  
+  // Cache metadata
+  expiresAt       DateTime
+  createdAt       DateTime  @default(now())
+  
+  @@index([inputAddress])
+  @@index([expiresAt])
+}
