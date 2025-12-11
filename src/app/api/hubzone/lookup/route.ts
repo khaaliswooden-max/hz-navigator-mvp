@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
 
 const SBA_HUBZONE_API = 'https://maps.certify.sba.gov/hubzone/api/geocoding';
 
@@ -28,22 +27,34 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  try {
-    // Check cache first
-    const normalizedAddress = address.toLowerCase().trim();
-    const cached = await prisma.addressLookupCache.findUnique({
-      where: { inputAddress: normalizedAddress },
-    });
+  // Check if we have a valid database connection
+  const hasDatabase = process.env.DATABASE_URL && 
+    process.env.DATABASE_URL.startsWith('postgresql://');
 
-    if (cached && cached.expiresAt > new Date()) {
-      return NextResponse.json({
-        cached: true,
-        address: address,
-        latitude: cached.latitude,
-        longitude: cached.longitude,
-        isHubzone: cached.isHubzone,
-        hubzoneType: cached.hubzoneType,
-      });
+  try {
+    const normalizedAddress = address.toLowerCase().trim();
+    
+    // Try to check cache if database is available
+    if (hasDatabase) {
+      try {
+        const { default: prisma } = await import('@/lib/prisma');
+        const cached = await prisma.addressLookupCache.findUnique({
+          where: { inputAddress: normalizedAddress },
+        });
+
+        if (cached && cached.expiresAt > new Date()) {
+          return NextResponse.json({
+            cached: true,
+            address: address,
+            latitude: cached.latitude,
+            longitude: cached.longitude,
+            isHubzone: cached.isHubzone,
+            hubzoneType: cached.hubzoneType,
+          });
+        }
+      } catch (e) {
+        console.warn('Cache lookup failed:', e);
+      }
     }
 
     // Geocode address using Mapbox (fallback to mock for MVP)
@@ -59,27 +70,34 @@ export async function GET(request: NextRequest) {
     // Check HUBZone status using SBA API
     const hubzoneResult = await checkHubzoneStatus(geocoded.latitude, geocoded.longitude);
 
-    // Cache the result (24 hour TTL)
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    
-    await prisma.addressLookupCache.upsert({
-      where: { inputAddress: normalizedAddress },
-      create: {
-        inputAddress: normalizedAddress,
-        latitude: geocoded.latitude,
-        longitude: geocoded.longitude,
-        isHubzone: hubzoneResult.hubzone_status,
-        hubzoneType: hubzoneResult.hubzone_type || null,
-        expiresAt,
-      },
-      update: {
-        latitude: geocoded.latitude,
-        longitude: geocoded.longitude,
-        isHubzone: hubzoneResult.hubzone_status,
-        hubzoneType: hubzoneResult.hubzone_type || null,
-        expiresAt,
-      },
-    });
+    // Cache the result if database is available (24 hour TTL)
+    if (hasDatabase) {
+      try {
+        const { default: prisma } = await import('@/lib/prisma');
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        
+        await prisma.addressLookupCache.upsert({
+          where: { inputAddress: normalizedAddress },
+          create: {
+            inputAddress: normalizedAddress,
+            latitude: geocoded.latitude,
+            longitude: geocoded.longitude,
+            isHubzone: hubzoneResult.hubzone_status,
+            hubzoneType: hubzoneResult.hubzone_type || null,
+            expiresAt,
+          },
+          update: {
+            latitude: geocoded.latitude,
+            longitude: geocoded.longitude,
+            isHubzone: hubzoneResult.hubzone_status,
+            hubzoneType: hubzoneResult.hubzone_type || null,
+            expiresAt,
+          },
+        });
+      } catch (e) {
+        console.warn('Cache save failed:', e);
+      }
+    }
 
     return NextResponse.json({
       cached: false,
