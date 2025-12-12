@@ -7,11 +7,18 @@ A HUBZone certification verification platform built with Next.js 14, designed fo
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)
 
+## 🌐 Live Demo
+
+**Production:** [hz-navigator-mvp.vercel.app](https://hz-navigator-mvp.vercel.app)
+
+- **Landing Page** (`/`) - Marketing page with interactive HUBZone address lookup demo
+- **Dashboard** (`/dashboard`) - Full compliance management application
+
 ## 🚀 Quick Deploy to Vercel
 
 ### Prerequisites
 
-1. **GitHub Account** - Your repo is at `khaaliswooden-max/hz-navigator`
+1. **GitHub Account** - Your repo is at `khaaliswooden-max/hz-navigator-mvp`
 2. **Vercel Account** - Sign up at [vercel.com](https://vercel.com) (free tier works)
 3. **Neon Account** - Sign up at [neon.tech](https://neon.tech) (free tier, PostgreSQL with PostGIS)
 4. **Mapbox Account** - Sign up at [mapbox.com](https://mapbox.com) (free tier)
@@ -35,12 +42,12 @@ A HUBZone certification verification platform built with Next.js 14, designed fo
 
 **Option A: One-Click Deploy**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/khaaliswooden-max/hz-navigator)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/khaaliswooden-max/hz-navigator-mvp)
 
 **Option B: Manual Deploy**
 
 1. Go to [vercel.com/new](https://vercel.com/new)
-2. Import your GitHub repo: `khaaliswooden-max/hz-navigator`
+2. Import your GitHub repo: `khaaliswooden-max/hz-navigator-mvp`
 3. Configure Environment Variables:
 
 | Variable | Value |
@@ -66,8 +73,8 @@ npx prisma db push
 
 ```bash
 # Clone the repo
-git clone https://github.com/khaaliswooden-max/hz-navigator.git
-cd hz-navigator
+git clone https://github.com/khaaliswooden-max/hz-navigator-mvp.git
+cd hz-navigator-mvp
 
 # Install dependencies
 npm install
@@ -93,24 +100,26 @@ Open [http://localhost:3000](http://localhost:3000)
 ```
 hz-navigator-mvp/
 ├── prisma/
-│   └── schema.prisma      # Database schema
+│   └── schema.prisma          # Database schema
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── hubzone/lookup/  # HUBZone verification API
-│   │   │   ├── employees/       # Employee CRUD
-│   │   │   └── compliance/      # Compliance stats
+│   │   │   ├── hubzone/lookup/    # HUBZone verification API
+│   │   │   ├── employees/         # Employee CRUD
+│   │   │   └── compliance/        # Compliance stats
+│   │   ├── dashboard/
+│   │   │   └── page.tsx           # Dashboard application
 │   │   ├── globals.css
 │   │   ├── layout.tsx
-│   │   └── page.tsx       # Main dashboard
+│   │   └── page.tsx               # Marketing landing page
 │   ├── components/
 │   │   ├── AddressLookup.tsx
 │   │   ├── ComplianceDashboard.tsx
 │   │   ├── EmployeeTable.tsx
 │   │   └── HubzoneMap.tsx
 │   └── lib/
-│       ├── prisma.ts      # Database client
-│       └── utils.ts       # Helper functions
+│       ├── prisma.ts              # Database client
+│       └── utils.ts               # Helper functions
 ├── .env.example
 ├── next.config.js
 ├── package.json
@@ -118,16 +127,38 @@ hz-navigator-mvp/
 └── tsconfig.json
 ```
 
+## 🖥️ Pages
+
+### Landing Page (`/`)
+Modern marketing landing page featuring:
+- **Hero Section** - Eye-catching headline with animated background
+- **Live Demo** - Interactive HUBZone address lookup (no sign-up required)
+- **Features Overview** - Instant verification, employee tracking, analytics, certification management
+- **How It Works** - 3-step onboarding guide
+- **Testimonials** - Customer success stories
+- **Pricing Tiers** - Starter (Free), Professional ($99/mo), Enterprise (Custom)
+- **Trust Badges** - SBA Certified Data, SOC 2 Compliant, 256-bit Encryption
+
+### Dashboard (`/dashboard`)
+Full-featured compliance management application:
+- **Compliance Dashboard** - Real-time 35% requirement tracking with trend charts
+- **Address Lookup** - Check any US address for HUBZone eligibility with map visualization
+- **Employee Roster** - Track employee addresses and residency status
+- **HUBZone Map** - Interactive Mapbox-powered map with HUBZone layers
+
 ## ✨ Features
 
 ### MVP (Current)
+- ✅ **Marketing Landing Page** - Professional landing page with live demo
 - ✅ **Address Lookup** - Check any US address for HUBZone eligibility
 - ✅ **Interactive Map** - Mapbox-powered visualization with HUBZone layers
 - ✅ **Employee Roster** - Track employee addresses and residency status
 - ✅ **Compliance Dashboard** - Real-time 35% requirement tracking
 - ✅ **Trend Analytics** - 12-month compliance history charts
+- ✅ **Responsive Design** - Works on desktop and mobile
 
 ### Coming Soon
+- 🔜 User authentication and accounts
 - 🔜 Employee CSV import/export
 - 🔜 Automated re-verification scheduling
 - 🔜 Email notifications for compliance warnings
@@ -140,7 +171,7 @@ hz-navigator-mvp/
 Check HUBZone status for an address.
 
 ```bash
-curl "https://your-app.vercel.app/api/hubzone/lookup?address=100+N+Court+Square,+Huntsville+AL"
+curl "https://hz-navigator-mvp.vercel.app/api/hubzone/lookup?address=100+N+Court+Square,+Huntsville+AL"
 ```
 
 Response:
@@ -159,14 +190,14 @@ Response:
 List employees for an organization.
 
 ```bash
-curl "https://your-app.vercel.app/api/employees?orgId=demo-org-001"
+curl "https://hz-navigator-mvp.vercel.app/api/employees?orgId=demo-org-001"
 ```
 
 ### GET `/api/compliance/stats`
 Get compliance statistics.
 
 ```bash
-curl "https://your-app.vercel.app/api/compliance/stats?orgId=demo-org-001"
+curl "https://hz-navigator-mvp.vercel.app/api/compliance/stats?orgId=demo-org-001"
 ```
 
 ## 🎨 Tech Stack
@@ -182,6 +213,7 @@ curl "https://your-app.vercel.app/api/compliance/stats?orgId=demo-org-001"
 | Charts | Recharts |
 | Icons | Lucide React |
 | Validation | Zod |
+| Hosting | Vercel |
 
 ## 📄 License
 
