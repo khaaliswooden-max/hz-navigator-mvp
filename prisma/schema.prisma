@@ -26,6 +26,11 @@ model Organization {
   employees       Employee[]
   locations       Location[]
   certifications  Certification[]
+  
+  // Agent constellation relations
+  agentTasks          AgentTask[]
+  complianceSnapshots ComplianceSnapshot[]
+  complianceAlerts    ComplianceAlert[]
 }
 
 // Employee records for residency tracking
@@ -49,6 +54,12 @@ model Employee {
   hubzoneType       String?  // QCT, QNMC, DDA, etc.
   lastVerified      DateTime?
   
+  // Agent constellation fields (2025 HUBZone rules)
+  isLegacyEmployee    Boolean   @default(false)  // Grandfathered employee (max 4)
+  residencyStartDate  DateTime?                   // For 90-day qualification tracking
+  censusTract         String?                     // Census tract ID
+  atRiskRedesignation Boolean   @default(false)  // In redesignated area
+  
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
@@ -56,6 +67,7 @@ model Employee {
   
   @@index([organizationId])
   @@index([isHubzoneResident])
+  @@index([isLegacyEmployee])
 }
 
 // Business locations
@@ -173,4 +185,128 @@ model AddressLookupCache {
   
   @@index([inputAddress])
   @@index([expiresAt])
+}
+
+// ============================================================================
+// AGENT CONSTELLATION MODELS
+// ============================================================================
+
+// Task queue for all agent operations
+model AgentTask {
+  id              String    @id @default(cuid())
+  agentType       String    // nexus, sentinel, cartograph, workforce, etc.
+  taskType        String    // specific operation being performed
+  status          String    @default("pending") // pending, processing, completed, failed
+  priority        Int       @default(5) // 1 = critical, 5 = routine
+  input           Json
+  output          Json?
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+  executionTimeMs Int?
+  errorMessage    String?
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([agentType])
+  @@index([createdAt])
+}
+
+// Point-in-time compliance snapshots
+model ComplianceSnapshot {
+  id                   String   @id @default(cuid())
+  organizationId       String
+  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  // Core metrics
+  totalEmployees       Int
+  hubzoneEmployees     Int
+  compliancePercentage Float
+  legacyEmployeeCount  Int      @default(0)
+  
+  // Risk assessment
+  riskScore            Float    @default(0)
+  complianceStatus     String   // compliant, at_risk, non_compliant, grace_period
+  
+  // Grace period tracking
+  gracePeriodActive    Boolean  @default(false)
+  gracePeriodEnd       DateTime?
+  
+  // Projections (JSON: { days30, days90, days180 })
+  projections          Json?
+  
+  snapshotDate         DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([snapshotDate])
+  @@index([complianceStatus])
+}
+
+// Proactive compliance alerts
+model ComplianceAlert {
+  id              String    @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  severity        String    // critical, warning, info
+  type            String    // compliance_drop, employee_relocation, map_change, etc.
+  source          String    @default("sentinel") // which agent generated
+  
+  title           String
+  description     String    @db.Text
+  
+  actionRequired  Boolean   @default(false)
+  suggestedAction String?
+  dueDate         DateTime?
+  
+  status          String    @default("active") // active, acknowledged, resolved, dismissed
+  acknowledgedAt  DateTime?
+  resolvedAt      DateTime?
+  resolution      String?
+  
+  createdAt       DateTime  @default(now())
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([severity])
+  @@index([createdAt])
+}
+
+// Learning events for ML training
+model LearningEvent {
+  id             String   @id @default(cuid())
+  eventType      String   // agent_taskType format
+  inputData      Json
+  outputData     Json
+  outcome        String?  // success, failure, partial
+  organizationId String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  @@index([eventType])
+  @@index([outcome])
+  @@index([createdAt])
+}
+
+// HUBZone map change tracking
+model HubzoneMapChange {
+  id                    String    @id @default(cuid())
+  censusTract           String
+  county                String?
+  state                 String?
+  
+  changeType            String    // designated, redesignated, expired
+  previousStatus        String?
+  newStatus             String
+  
+  effectiveDate         DateTime
+  expirationDate        DateTime?
+  
+  detectedAt            DateTime  @default(now())
+  affectedOrganizations Json?     // { orgId: true, ... }
+
+  @@index([censusTract])
+  @@index([changeType])
+  @@index([effectiveDate])
 }
