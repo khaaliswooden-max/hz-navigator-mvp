@@ -13,6 +13,7 @@
  */
 
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import type { AgentTask, Organization, ComplianceSnapshot } from '@prisma/client';
 
 // ============================================================================
@@ -554,8 +555,8 @@ export class NexusOrchestrator {
       await prisma.learningEvent.create({
         data: {
           eventType: `nexus_${eventType}`,
-          inputData: data,
-          outputData: {},
+          inputData: data as Prisma.InputJsonValue,
+          outputData: {} as Prisma.InputJsonValue,
           outcome: 'success',
         },
       });

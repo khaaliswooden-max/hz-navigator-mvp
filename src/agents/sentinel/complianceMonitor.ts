@@ -43,13 +43,13 @@ export class SentinelAgent {
   ): Promise<Record<string, unknown>> {
     switch (taskType) {
       case 'calculate_compliance':
-        return await this.calculateCompliance(organizationId);
+        return await this.calculateCompliance(organizationId) as unknown as Record<string, unknown>;
       
       case 'check_employee_status':
-        return await this.checkEmployeeStatus(organizationId, input.employeeId as string);
+        return await this.checkEmployeeStatus(organizationId, input.employeeId as string) as unknown as Record<string, unknown>;
       
       case 'generate_alerts':
-        return await this.generateAlerts(organizationId);
+        return await this.generateAlerts(organizationId) as unknown as Record<string, unknown>;
       
       default:
         throw new Error(`[SENTINEL] Unknown task type: ${taskType}`);
