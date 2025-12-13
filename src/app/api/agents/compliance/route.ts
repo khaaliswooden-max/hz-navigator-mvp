@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getNexus } from '@/agents/nexus/orchestrator';
+import { getNexusOrchestrator } from '@/agents/nexus/orchestrator';
 
 // GET: Fetch latest compliance snapshot
 export async function GET(request: NextRequest) {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get NEXUS orchestrator and dispatch task to SENTINEL
-    const nexus = getNexus(prisma);
+    const nexus = getNexusOrchestrator();
     
     const result = await nexus.createTask({
       agentType: 'sentinel',
