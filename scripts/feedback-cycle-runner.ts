@@ -187,16 +187,17 @@ async function runSentinelSelfTest(
     // Test 1: Compliance calculation
     const result = await sentinel.execute('calculate_compliance', {}, org.id);
 
-    if (result.percentage == null) {
+    const percentage = result.percentage as number | null | undefined;
+    if (percentage == null) {
       feedback.push(createFeedback(cycleNumber, 'SENTINEL', 'calculate_compliance', 'bug', 'critical',
         'Compliance calculation returns no percentage',
         'Returns percentage between 0-100',
         `Returns: ${JSON.stringify(result)}`, {}));
-    } else if (result.percentage < 0 || result.percentage > 100) {
+    } else if (percentage < 0 || percentage > 100) {
       feedback.push(createFeedback(cycleNumber, 'SENTINEL', 'calculate_compliance', 'bug', 'high',
-        `Invalid compliance percentage: ${result.percentage}`,
+        `Invalid compliance percentage: ${percentage}`,
         'Percentage should be between 0 and 100',
-        `Got: ${result.percentage}`, { result }));
+        `Got: ${percentage}`, { result }));
     }
 
     // Test 2: Alert generation
@@ -213,11 +214,12 @@ async function runSentinelSelfTest(
     }
 
     // Test 3: Risk assessment
-    if (result.riskScore !== undefined && (result.riskScore < 0 || result.riskScore > 100)) {
+    const riskScore = result.riskScore as number | undefined;
+    if (riskScore !== undefined && (riskScore < 0 || riskScore > 100)) {
       feedback.push(createFeedback(cycleNumber, 'SENTINEL', 'risk_assessment', 'data_quality', 'medium',
-        `Invalid risk score: ${result.riskScore}`,
+        `Invalid risk score: ${riskScore}`,
         'Risk score should be 0-100',
-        `Got: ${result.riskScore}`, {}));
+        `Got: ${riskScore}`, {}));
     }
 
   } catch (error: unknown) {
