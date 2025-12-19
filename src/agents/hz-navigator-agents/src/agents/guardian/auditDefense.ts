@@ -216,8 +216,11 @@ export class GuardianAgent {
       orderBy: { createdAt: 'desc' },
     });
 
+    // Generate unique package ID with timestamp and random component
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
     return {
-      packageId: `EVD-${organizationId}-${Date.now()}`,
+      packageId: `EVD-${organizationId}-${uniqueId}`,
       generatedAt: new Date(),
       period: { start, end },
       summary: {

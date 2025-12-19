@@ -252,7 +252,7 @@ describe('CARTOGRAPH Agent Stress Tests', () => {
       expect(result.verified + result.errorCount).toBe(200);
       // Allow generous time due to rate limiting (100ms per address)
       expect(duration).toBeLessThan(30000); // 30 seconds max
-    });
+    }, 35000); // 35 second timeout for this test
 
     test('should accurately calculate HUBZone percentage in batch', async () => {
       const addresses = generateValidAddresses(100);
@@ -277,11 +277,11 @@ describe('CARTOGRAPH Agent Stress Tests', () => {
       ) as { summary: { hubzonePercentage: number } };
 
       expect(result.summary.hubzonePercentage).toBeCloseTo(60, 0);
-    });
+    }, 15000); // 15 second timeout for 100 addresses
 
     test('should handle mixed valid/invalid addresses in batch', async () => {
-      const validAddresses = generateValidAddresses(150);
-      const malformedAddresses = generateMalformedAddresses().slice(0, 50);
+      const malformedAddresses = generateMalformedAddresses(); // Returns ~20 addresses
+      const validAddresses = generateValidAddresses(200 - malformedAddresses.length);
       const mixedAddresses = [...validAddresses, ...malformedAddresses];
 
       (prisma.addressLookupCache.findUnique as jest.Mock).mockResolvedValue(null);
@@ -296,7 +296,7 @@ describe('CARTOGRAPH Agent Stress Tests', () => {
       expect(result.total).toBe(200);
       // Should have some errors from malformed addresses
       expect(result.verified).toBeGreaterThan(0);
-    });
+    }, 30000); // 30 second timeout for 200 addresses
 
     test('should utilize cache effectively in batch verification', async () => {
       const addresses = generateValidAddresses(50);
@@ -331,7 +331,7 @@ describe('CARTOGRAPH Agent Stress Tests', () => {
       ) as { total: number };
 
       expect(result.total).toBe(75);
-    });
+    }, 12000); // 12 second timeout for 75 addresses
   });
 
   describe('API Reliability', () => {

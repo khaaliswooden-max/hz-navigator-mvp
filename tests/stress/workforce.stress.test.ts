@@ -53,8 +53,10 @@ describe('WORKFORCE Agent Stress Tests', () => {
     });
 
     test('should correctly handle exactly 90 days (edge case)', async () => {
+      // Create date exactly 90 days ago at midnight for consistent comparison
       const exactlyNinetyDaysAgo = new Date();
       exactlyNinetyDaysAgo.setDate(exactlyNinetyDaysAgo.getDate() - 90);
+      exactlyNinetyDaysAgo.setHours(0, 0, 0, 0);
 
       const employee = generateMockEmployee(testOrgId, {
         isHubzoneResident: true,
@@ -69,7 +71,7 @@ describe('WORKFORCE Agent Stress Tests', () => {
         testOrgId
       ) as { qualified: number; pending: number };
 
-      // Exactly 90 days should be pending (need >90 days)
+      // Exactly 90 days should be pending (need >90 days to qualify)
       expect(result.pending).toBe(1);
       expect(result.qualified).toBe(0);
     });
@@ -165,8 +167,10 @@ describe('WORKFORCE Agent Stress Tests', () => {
 
     test('should correctly count legacy employees', async () => {
       const employees = generateEmployeesWithLegacyStatus(testOrgId, 30, 3);
+      // Mock should only return legacy employees (filtered by isLegacyEmployee: true)
+      const legacyEmployees = employees.filter(e => e.isLegacyEmployee);
       
-      (prisma.employee.findMany as jest.Mock).mockResolvedValue(employees);
+      (prisma.employee.findMany as jest.Mock).mockResolvedValue(legacyEmployees);
 
       const result = await workforce.execute(
         'get_legacy_employees',
@@ -181,8 +185,10 @@ describe('WORKFORCE Agent Stress Tests', () => {
 
     test('should correctly identify when at legacy limit (4)', async () => {
       const employees = generateEmployeesWithLegacyStatus(testOrgId, 30, 4);
+      // Mock should only return legacy employees (filtered by isLegacyEmployee: true)
+      const legacyEmployees = employees.filter(e => e.isLegacyEmployee);
       
-      (prisma.employee.findMany as jest.Mock).mockResolvedValue(employees);
+      (prisma.employee.findMany as jest.Mock).mockResolvedValue(legacyEmployees);
 
       const result = await workforce.execute(
         'get_legacy_employees',

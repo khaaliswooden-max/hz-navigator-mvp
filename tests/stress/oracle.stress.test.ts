@@ -338,7 +338,8 @@ describe('ORACLE Agent Stress Tests', () => {
     });
 
     test('should handle insufficient trend data gracefully', async () => {
-      const twoSnapshots = generateComplianceHistory(testOrgId, 2, 40, 'stable');
+      // Note: generateComplianceHistory creates days+1 snapshots, so use slice to get exactly 2
+      const twoSnapshots = generateComplianceHistory(testOrgId, 5, 40, 'stable').slice(0, 2);
       
       (prisma.complianceSnapshot.findMany as jest.Mock).mockResolvedValue(twoSnapshots);
 

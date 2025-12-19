@@ -1,0 +1,1296 @@
+{
+  "cycleNumber": 1766159506019,
+  "timestamp": "2025-12-19T15:51:46.499Z",
+  "report": {
+    "summary": {
+      "total": 43,
+      "bySeverity": {
+        "critical": 0,
+        "high": 1,
+        "medium": 26,
+        "low": 16
+      },
+      "byCategory": {
+        "bug": 17,
+        "ux_issue": 5,
+        "performance": 0,
+        "feature_gap": 3,
+        "data_quality": 18
+      }
+    },
+    "canProceed": true,
+    "issues": [
+      {
+        "id": "fs-missing-src-app-employees-page.tsx",
+        "category": "bug",
+        "severity": "medium",
+        "component": "filesystem",
+        "description": "Missing required file: src/app/employees/page.tsx",
+        "expectedBehavior": "File src/app/employees/page.tsx should exist",
+        "actualBehavior": "File not found",
+        "patch": {
+          "type": "file_create",
+          "path": "src/app/employees/page.tsx",
+          "template": "component"
+        }
+      },
+      {
+        "id": "code-hardcoded-url-next-env.d.ts",
+        "category": "data_quality",
+        "severity": "medium",
+        "component": "next-env.d.ts",
+        "description": "Hardcoded URLs found in next-env.d.ts",
+        "expectedBehavior": "Use environment variables for external URLs",
+        "actualBehavior": "Found: https://nextjs.org/docs/app/building-your-application/configuring/typescript",
+        "patch": {
+          "type": "note",
+          "note": "Move URLs to environment variables"
+        }
+      },
+      {
+        "id": "code-console-prisma\\seed.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "prisma\\seed.ts",
+        "description": "Excessive console statements (12) in prisma\\seed.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 12 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-console-scripts\\apply-patches.js",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "scripts\\apply-patches.js",
+        "description": "Excessive console statements (13) in scripts\\apply-patches.js",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 13 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-todo-scripts\\apply-patches.js",
+        "category": "feature_gap",
+        "severity": "low",
+        "component": "scripts\\apply-patches.js",
+        "description": "Found 4 TODO/FIXME comment(s) in scripts\\apply-patches.js",
+        "expectedBehavior": "Address or document technical debt",
+        "actualBehavior": "// TODO:, // TODO:, // TODO:",
+        "patch": {
+          "type": "note",
+          "note": "Review and address TODO comments"
+        }
+      },
+      {
+        "id": "code-console-scripts\\execute-feedback-cycle.js",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "scripts\\execute-feedback-cycle.js",
+        "description": "Excessive console statements (22) in scripts\\execute-feedback-cycle.js",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 22 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-todo-scripts\\execute-feedback-cycle.js",
+        "category": "feature_gap",
+        "severity": "low",
+        "component": "scripts\\execute-feedback-cycle.js",
+        "description": "Found 1 TODO/FIXME comment(s) in scripts\\execute-feedback-cycle.js",
+        "expectedBehavior": "Address or document technical debt",
+        "actualBehavior": "// TODO:",
+        "patch": {
+          "type": "note",
+          "note": "Review and address TODO comments"
+        }
+      },
+      {
+        "id": "code-console-scripts\\feedback-cycle-runner.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "scripts\\feedback-cycle-runner.ts",
+        "description": "Excessive console statements (59) in scripts\\feedback-cycle-runner.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 59 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-console-scripts\\health-check-runner.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "scripts\\health-check-runner.ts",
+        "description": "Excessive console statements (34) in scripts\\health-check-runner.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 34 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-console-src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "description": "Excessive console statements (6) in src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 6 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-hardcoded-url-src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "category": "data_quality",
+        "severity": "medium",
+        "component": "src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "description": "Hardcoded URLs found in src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "expectedBehavior": "Use environment variables for external URLs",
+        "actualBehavior": "Found: https://maps.certify.sba.gov/hubzone/api",
+        "patch": {
+          "type": "note",
+          "note": "Move URLs to environment variables"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\diplomat\\partnershipIntelligence.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\diplomat\\partnershipIntelligence.ts",
+        "description": "Missing error handling in async code: src\\agents\\diplomat\\partnershipIntelligence.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\guardian\\auditDefense.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\guardian\\auditDefense.ts",
+        "description": "Missing error handling in async code: src\\agents\\guardian\\auditDefense.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-console-src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+        "description": "Excessive console statements (67) in src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 67 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-console-src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+        "description": "Excessive console statements (29) in src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 29 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-console-src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+        "description": "Excessive console statements (19) in src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 19 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-console-src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "description": "Excessive console statements (6) in src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 6 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-hardcoded-url-src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "category": "data_quality",
+        "severity": "medium",
+        "component": "src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "description": "Hardcoded URLs found in src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+        "expectedBehavior": "Use environment variables for external URLs",
+        "actualBehavior": "Found: https://maps.certify.sba.gov/hubzone/api, https://geocoding.geo.census.gov/geocoder/geographies/coordinates",
+        "patch": {
+          "type": "note",
+          "note": "Move URLs to environment variables"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+        "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-console-src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+        "category": "data_quality",
+        "severity": "low",
+        "component": "src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+        "description": "Excessive console statements (4) in src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+        "expectedBehavior": "Use proper logging or remove debug statements",
+        "actualBehavior": "Found 4 console statements",
+        "patch": {
+          "type": "note",
+          "note": "Review and remove unnecessary console statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+        "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+        "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+        "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+        "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\oracle\\predictiveAnalytics.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\oracle\\predictiveAnalytics.ts",
+        "description": "Missing error handling in async code: src\\agents\\oracle\\predictiveAnalytics.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\sentinel\\complianceMonitor.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\sentinel\\complianceMonitor.ts",
+        "description": "Missing error handling in async code: src\\agents\\sentinel\\complianceMonitor.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-src\\agents\\workforce\\employeeIntelligence.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "src\\agents\\workforce\\employeeIntelligence.ts",
+        "description": "Missing error handling in async code: src\\agents\\workforce\\employeeIntelligence.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-hardcoded-url-src\\app\\api\\agents\\cartograph\\route.ts",
+        "category": "data_quality",
+        "severity": "medium",
+        "component": "src\\app\\api\\agents\\cartograph\\route.ts",
+        "description": "Hardcoded URLs found in src\\app\\api\\agents\\cartograph\\route.ts",
+        "expectedBehavior": "Use environment variables for external URLs",
+        "actualBehavior": "Found: https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress",
+        "patch": {
+          "type": "note",
+          "note": "Move URLs to environment variables"
+        }
+      },
+      {
+        "id": "code-hardcoded-url-src\\app\\api\\hubzone\\lookup\\route.ts",
+        "category": "data_quality",
+        "severity": "medium",
+        "component": "src\\app\\api\\hubzone\\lookup\\route.ts",
+        "description": "Hardcoded URLs found in src\\app\\api\\hubzone\\lookup\\route.ts",
+        "expectedBehavior": "Use environment variables for external URLs",
+        "actualBehavior": "Found: https://maps.certify.sba.gov/hubzone/api/geocoding, https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedAddress}.json?access_token=${mapboxToken}&country=US&limit=1`",
+        "patch": {
+          "type": "note",
+          "note": "Move URLs to environment variables"
+        }
+      },
+      {
+        "id": "code-hardcoded-url-src\\app\\layout.tsx",
+        "category": "data_quality",
+        "severity": "medium",
+        "component": "src\\app\\layout.tsx",
+        "description": "Hardcoded URLs found in src\\app\\layout.tsx",
+        "expectedBehavior": "Use environment variables for external URLs",
+        "actualBehavior": "Found: https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css",
+        "patch": {
+          "type": "note",
+          "note": "Move URLs to environment variables"
+        }
+      },
+      {
+        "id": "code-hardcoded-url-src\\app\\map\\page.tsx",
+        "category": "data_quality",
+        "severity": "medium",
+        "component": "src\\app\\map\\page.tsx",
+        "description": "Hardcoded URLs found in src\\app\\map\\page.tsx",
+        "expectedBehavior": "Use environment variables for external URLs",
+        "actualBehavior": "Found: https://maps.certify.sba.gov/hubzone/map#address=${encodedAddress}`,, https://maps.certify.sba.gov/hubzone/map",
+        "patch": {
+          "type": "note",
+          "note": "Move URLs to environment variables"
+        }
+      },
+      {
+        "id": "code-no-error-handling-tests\\setup.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "tests\\setup.ts",
+        "description": "Missing error handling in async code: tests\\setup.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-tests\\stress\\capture.stress.test.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "tests\\stress\\capture.stress.test.ts",
+        "description": "Missing error handling in async code: tests\\stress\\capture.stress.test.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-tests\\stress\\guardian.stress.test.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "tests\\stress\\guardian.stress.test.ts",
+        "description": "Missing error handling in async code: tests\\stress\\guardian.stress.test.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-tests\\stress\\oracle.stress.test.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "tests\\stress\\oracle.stress.test.ts",
+        "description": "Missing error handling in async code: tests\\stress\\oracle.stress.test.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-tests\\stress\\sentinel.stress.test.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "tests\\stress\\sentinel.stress.test.ts",
+        "description": "Missing error handling in async code: tests\\stress\\sentinel.stress.test.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "code-no-error-handling-tests\\stress\\workforce.stress.test.ts",
+        "category": "bug",
+        "severity": "medium",
+        "component": "tests\\stress\\workforce.stress.test.ts",
+        "description": "Missing error handling in async code: tests\\stress\\workforce.stress.test.ts",
+        "expectedBehavior": "Async/await should have try/catch",
+        "actualBehavior": "No error handling found",
+        "patch": {
+          "type": "note",
+          "note": "Add try/catch blocks around await statements"
+        }
+      },
+      {
+        "id": "api-missing-compliance-route.ts",
+        "category": "feature_gap",
+        "severity": "high",
+        "component": "api/compliance/route.ts",
+        "description": "Missing API endpoint: compliance/route.ts",
+        "expectedBehavior": "Endpoint should handle GET, POST",
+        "actualBehavior": "Endpoint file not found",
+        "patch": {
+          "type": "file_create",
+          "path": "src/app/api/compliance/route.ts",
+          "template": "api_route",
+          "methods": [
+            "GET",
+            "POST"
+          ]
+        }
+      },
+      {
+        "id": "ui-a11y-src\\app\\dashboard\\page.tsx",
+        "category": "ux_issue",
+        "severity": "low",
+        "component": "src\\app\\dashboard\\page.tsx",
+        "description": "Missing ARIA attributes in src\\app\\dashboard\\page.tsx",
+        "expectedBehavior": "Interactive elements should have ARIA labels",
+        "actualBehavior": "No aria-* attributes found on buttons",
+        "patch": {
+          "type": "note",
+          "note": "Add aria-label or aria-labelledby to buttons"
+        }
+      },
+      {
+        "id": "ui-a11y-src\\app\\map\\page.tsx",
+        "category": "ux_issue",
+        "severity": "low",
+        "component": "src\\app\\map\\page.tsx",
+        "description": "Missing ARIA attributes in src\\app\\map\\page.tsx",
+        "expectedBehavior": "Interactive elements should have ARIA labels",
+        "actualBehavior": "No aria-* attributes found on buttons",
+        "patch": {
+          "type": "note",
+          "note": "Add aria-label or aria-labelledby to buttons"
+        }
+      },
+      {
+        "id": "ui-no-loading-src\\app\\page.tsx",
+        "category": "ux_issue",
+        "severity": "medium",
+        "component": "src\\app\\page.tsx",
+        "description": "Missing loading state in src\\app\\page.tsx",
+        "expectedBehavior": "Pages with state should show loading indicators",
+        "actualBehavior": "No loading state found",
+        "patch": {
+          "type": "note",
+          "note": "Add loading state and spinner/skeleton"
+        }
+      },
+      {
+        "id": "ui-no-error-state-src\\app\\page.tsx",
+        "category": "ux_issue",
+        "severity": "medium",
+        "component": "src\\app\\page.tsx",
+        "description": "Missing error handling UI in src\\app\\page.tsx",
+        "expectedBehavior": "Pages should display errors gracefully",
+        "actualBehavior": "No error state found",
+        "patch": {
+          "type": "note",
+          "note": "Add error state and user-friendly error message"
+        }
+      },
+      {
+        "id": "ui-a11y-src\\app\\page.tsx",
+        "category": "ux_issue",
+        "severity": "low",
+        "component": "src\\app\\page.tsx",
+        "description": "Missing ARIA attributes in src\\app\\page.tsx",
+        "expectedBehavior": "Interactive elements should have ARIA labels",
+        "actualBehavior": "No aria-* attributes found on buttons",
+        "patch": {
+          "type": "note",
+          "note": "Add aria-label or aria-labelledby to buttons"
+        }
+      }
+    ]
+  },
+  "patches": [
+    {
+      "issueId": "fs-missing-src-app-employees-page.tsx",
+      "severity": "medium",
+      "component": "filesystem",
+      "description": "Missing required file: src/app/employees/page.tsx",
+      "type": "file_create",
+      "path": "src/app/employees/page.tsx",
+      "template": "component"
+    },
+    {
+      "issueId": "code-hardcoded-url-next-env.d.ts",
+      "severity": "medium",
+      "component": "next-env.d.ts",
+      "description": "Hardcoded URLs found in next-env.d.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-console-prisma\\seed.ts",
+      "severity": "low",
+      "component": "prisma\\seed.ts",
+      "description": "Excessive console statements (12) in prisma\\seed.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-scripts\\apply-patches.js",
+      "severity": "low",
+      "component": "scripts\\apply-patches.js",
+      "description": "Excessive console statements (13) in scripts\\apply-patches.js",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-todo-scripts\\apply-patches.js",
+      "severity": "low",
+      "component": "scripts\\apply-patches.js",
+      "description": "Found 4 TODO/FIXME comment(s) in scripts\\apply-patches.js",
+      "type": "note",
+      "note": "Review and address TODO comments"
+    },
+    {
+      "issueId": "code-console-scripts\\execute-feedback-cycle.js",
+      "severity": "low",
+      "component": "scripts\\execute-feedback-cycle.js",
+      "description": "Excessive console statements (22) in scripts\\execute-feedback-cycle.js",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-todo-scripts\\execute-feedback-cycle.js",
+      "severity": "low",
+      "component": "scripts\\execute-feedback-cycle.js",
+      "description": "Found 1 TODO/FIXME comment(s) in scripts\\execute-feedback-cycle.js",
+      "type": "note",
+      "note": "Review and address TODO comments"
+    },
+    {
+      "issueId": "code-console-scripts\\feedback-cycle-runner.ts",
+      "severity": "low",
+      "component": "scripts\\feedback-cycle-runner.ts",
+      "description": "Excessive console statements (59) in scripts\\feedback-cycle-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-scripts\\health-check-runner.ts",
+      "severity": "low",
+      "component": "scripts\\health-check-runner.ts",
+      "description": "Excessive console statements (34) in scripts\\health-check-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "severity": "low",
+      "component": "src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "description": "Excessive console statements (6) in src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "description": "Hardcoded URLs found in src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "description": "Missing error handling in async code: src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\guardian\\auditDefense.ts",
+      "severity": "medium",
+      "component": "src\\agents\\guardian\\auditDefense.ts",
+      "description": "Missing error handling in async code: src\\agents\\guardian\\auditDefense.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+      "description": "Excessive console statements (67) in src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+      "description": "Excessive console statements (29) in src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+      "description": "Excessive console statements (19) in src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "description": "Excessive console statements (6) in src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "description": "Hardcoded URLs found in src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+      "description": "Excessive console statements (4) in src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\oracle\\predictiveAnalytics.ts",
+      "severity": "medium",
+      "component": "src\\agents\\oracle\\predictiveAnalytics.ts",
+      "description": "Missing error handling in async code: src\\agents\\oracle\\predictiveAnalytics.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\sentinel\\complianceMonitor.ts",
+      "severity": "medium",
+      "component": "src\\agents\\sentinel\\complianceMonitor.ts",
+      "description": "Missing error handling in async code: src\\agents\\sentinel\\complianceMonitor.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\workforce\\employeeIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\workforce\\employeeIntelligence.ts",
+      "description": "Missing error handling in async code: src\\agents\\workforce\\employeeIntelligence.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\app\\api\\agents\\cartograph\\route.ts",
+      "severity": "medium",
+      "component": "src\\app\\api\\agents\\cartograph\\route.ts",
+      "description": "Hardcoded URLs found in src\\app\\api\\agents\\cartograph\\route.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\app\\api\\hubzone\\lookup\\route.ts",
+      "severity": "medium",
+      "component": "src\\app\\api\\hubzone\\lookup\\route.ts",
+      "description": "Hardcoded URLs found in src\\app\\api\\hubzone\\lookup\\route.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\app\\layout.tsx",
+      "severity": "medium",
+      "component": "src\\app\\layout.tsx",
+      "description": "Hardcoded URLs found in src\\app\\layout.tsx",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\app\\map\\page.tsx",
+      "severity": "medium",
+      "component": "src\\app\\map\\page.tsx",
+      "description": "Hardcoded URLs found in src\\app\\map\\page.tsx",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\setup.ts",
+      "severity": "medium",
+      "component": "tests\\setup.ts",
+      "description": "Missing error handling in async code: tests\\setup.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\capture.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\capture.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\capture.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\guardian.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\guardian.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\guardian.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\oracle.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\oracle.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\oracle.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\sentinel.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\sentinel.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\sentinel.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\workforce.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\workforce.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\workforce.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "api-missing-compliance-route.ts",
+      "severity": "high",
+      "component": "api/compliance/route.ts",
+      "description": "Missing API endpoint: compliance/route.ts",
+      "type": "file_create",
+      "path": "src/app/api/compliance/route.ts",
+      "template": "api_route",
+      "methods": [
+        "GET",
+        "POST"
+      ]
+    },
+    {
+      "issueId": "ui-a11y-src\\app\\dashboard\\page.tsx",
+      "severity": "low",
+      "component": "src\\app\\dashboard\\page.tsx",
+      "description": "Missing ARIA attributes in src\\app\\dashboard\\page.tsx",
+      "type": "note",
+      "note": "Add aria-label or aria-labelledby to buttons"
+    },
+    {
+      "issueId": "ui-a11y-src\\app\\map\\page.tsx",
+      "severity": "low",
+      "component": "src\\app\\map\\page.tsx",
+      "description": "Missing ARIA attributes in src\\app\\map\\page.tsx",
+      "type": "note",
+      "note": "Add aria-label or aria-labelledby to buttons"
+    },
+    {
+      "issueId": "ui-no-loading-src\\app\\page.tsx",
+      "severity": "medium",
+      "component": "src\\app\\page.tsx",
+      "description": "Missing loading state in src\\app\\page.tsx",
+      "type": "note",
+      "note": "Add loading state and spinner/skeleton"
+    },
+    {
+      "issueId": "ui-no-error-state-src\\app\\page.tsx",
+      "severity": "medium",
+      "component": "src\\app\\page.tsx",
+      "description": "Missing error handling UI in src\\app\\page.tsx",
+      "type": "note",
+      "note": "Add error state and user-friendly error message"
+    },
+    {
+      "issueId": "ui-a11y-src\\app\\page.tsx",
+      "severity": "low",
+      "component": "src\\app\\page.tsx",
+      "description": "Missing ARIA attributes in src\\app\\page.tsx",
+      "type": "note",
+      "note": "Add aria-label or aria-labelledby to buttons"
+    }
+  ],
+  "autoApply": [
+    {
+      "issueId": "fs-missing-src-app-employees-page.tsx",
+      "severity": "medium",
+      "component": "filesystem",
+      "description": "Missing required file: src/app/employees/page.tsx",
+      "type": "file_create",
+      "path": "src/app/employees/page.tsx",
+      "template": "component"
+    },
+    {
+      "issueId": "code-hardcoded-url-next-env.d.ts",
+      "severity": "medium",
+      "component": "next-env.d.ts",
+      "description": "Hardcoded URLs found in next-env.d.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-console-prisma\\seed.ts",
+      "severity": "low",
+      "component": "prisma\\seed.ts",
+      "description": "Excessive console statements (12) in prisma\\seed.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-scripts\\apply-patches.js",
+      "severity": "low",
+      "component": "scripts\\apply-patches.js",
+      "description": "Excessive console statements (13) in scripts\\apply-patches.js",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-todo-scripts\\apply-patches.js",
+      "severity": "low",
+      "component": "scripts\\apply-patches.js",
+      "description": "Found 4 TODO/FIXME comment(s) in scripts\\apply-patches.js",
+      "type": "note",
+      "note": "Review and address TODO comments"
+    },
+    {
+      "issueId": "code-console-scripts\\execute-feedback-cycle.js",
+      "severity": "low",
+      "component": "scripts\\execute-feedback-cycle.js",
+      "description": "Excessive console statements (22) in scripts\\execute-feedback-cycle.js",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-todo-scripts\\execute-feedback-cycle.js",
+      "severity": "low",
+      "component": "scripts\\execute-feedback-cycle.js",
+      "description": "Found 1 TODO/FIXME comment(s) in scripts\\execute-feedback-cycle.js",
+      "type": "note",
+      "note": "Review and address TODO comments"
+    },
+    {
+      "issueId": "code-console-scripts\\feedback-cycle-runner.ts",
+      "severity": "low",
+      "component": "scripts\\feedback-cycle-runner.ts",
+      "description": "Excessive console statements (59) in scripts\\feedback-cycle-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-scripts\\health-check-runner.ts",
+      "severity": "low",
+      "component": "scripts\\health-check-runner.ts",
+      "description": "Excessive console statements (34) in scripts\\health-check-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "severity": "low",
+      "component": "src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "description": "Excessive console statements (6) in src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "description": "Hardcoded URLs found in src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "description": "Missing error handling in async code: src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\guardian\\auditDefense.ts",
+      "severity": "medium",
+      "component": "src\\agents\\guardian\\auditDefense.ts",
+      "description": "Missing error handling in async code: src\\agents\\guardian\\auditDefense.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+      "description": "Excessive console statements (67) in src\\agents\\hz-navigator-agents\\scripts\\build-cycle-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+      "description": "Excessive console statements (29) in src\\agents\\hz-navigator-agents\\scripts\\feedback-cycle-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+      "description": "Excessive console statements (19) in src\\agents\\hz-navigator-agents\\scripts\\health-check-runner.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "description": "Excessive console statements (6) in src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "description": "Hardcoded URLs found in src\\agents\\hz-navigator-agents\\src\\agents\\cartograph\\geospatialIntelligence.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\diplomat\\partnershipIntelligence.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-console-src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+      "severity": "low",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+      "description": "Excessive console statements (4) in src\\agents\\hz-navigator-agents\\src\\agents\\feedback\\recursiveLearning.ts",
+      "type": "note",
+      "note": "Review and remove unnecessary console statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\guardian\\auditDefense.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\oracle\\predictiveAnalytics.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\sentinel\\complianceMonitor.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+      "description": "Missing error handling in async code: src\\agents\\hz-navigator-agents\\src\\agents\\workforce\\employeeIntelligence.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\oracle\\predictiveAnalytics.ts",
+      "severity": "medium",
+      "component": "src\\agents\\oracle\\predictiveAnalytics.ts",
+      "description": "Missing error handling in async code: src\\agents\\oracle\\predictiveAnalytics.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\sentinel\\complianceMonitor.ts",
+      "severity": "medium",
+      "component": "src\\agents\\sentinel\\complianceMonitor.ts",
+      "description": "Missing error handling in async code: src\\agents\\sentinel\\complianceMonitor.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-src\\agents\\workforce\\employeeIntelligence.ts",
+      "severity": "medium",
+      "component": "src\\agents\\workforce\\employeeIntelligence.ts",
+      "description": "Missing error handling in async code: src\\agents\\workforce\\employeeIntelligence.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\app\\api\\agents\\cartograph\\route.ts",
+      "severity": "medium",
+      "component": "src\\app\\api\\agents\\cartograph\\route.ts",
+      "description": "Hardcoded URLs found in src\\app\\api\\agents\\cartograph\\route.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\app\\api\\hubzone\\lookup\\route.ts",
+      "severity": "medium",
+      "component": "src\\app\\api\\hubzone\\lookup\\route.ts",
+      "description": "Hardcoded URLs found in src\\app\\api\\hubzone\\lookup\\route.ts",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\app\\layout.tsx",
+      "severity": "medium",
+      "component": "src\\app\\layout.tsx",
+      "description": "Hardcoded URLs found in src\\app\\layout.tsx",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-hardcoded-url-src\\app\\map\\page.tsx",
+      "severity": "medium",
+      "component": "src\\app\\map\\page.tsx",
+      "description": "Hardcoded URLs found in src\\app\\map\\page.tsx",
+      "type": "note",
+      "note": "Move URLs to environment variables"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\setup.ts",
+      "severity": "medium",
+      "component": "tests\\setup.ts",
+      "description": "Missing error handling in async code: tests\\setup.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\capture.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\capture.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\capture.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\guardian.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\guardian.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\guardian.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\oracle.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\oracle.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\oracle.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\sentinel.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\sentinel.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\sentinel.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "code-no-error-handling-tests\\stress\\workforce.stress.test.ts",
+      "severity": "medium",
+      "component": "tests\\stress\\workforce.stress.test.ts",
+      "description": "Missing error handling in async code: tests\\stress\\workforce.stress.test.ts",
+      "type": "note",
+      "note": "Add try/catch blocks around await statements"
+    },
+    {
+      "issueId": "ui-a11y-src\\app\\dashboard\\page.tsx",
+      "severity": "low",
+      "component": "src\\app\\dashboard\\page.tsx",
+      "description": "Missing ARIA attributes in src\\app\\dashboard\\page.tsx",
+      "type": "note",
+      "note": "Add aria-label or aria-labelledby to buttons"
+    },
+    {
+      "issueId": "ui-a11y-src\\app\\map\\page.tsx",
+      "severity": "low",
+      "component": "src\\app\\map\\page.tsx",
+      "description": "Missing ARIA attributes in src\\app\\map\\page.tsx",
+      "type": "note",
+      "note": "Add aria-label or aria-labelledby to buttons"
+    },
+    {
+      "issueId": "ui-no-loading-src\\app\\page.tsx",
+      "severity": "medium",
+      "component": "src\\app\\page.tsx",
+      "description": "Missing loading state in src\\app\\page.tsx",
+      "type": "note",
+      "note": "Add loading state and spinner/skeleton"
+    },
+    {
+      "issueId": "ui-no-error-state-src\\app\\page.tsx",
+      "severity": "medium",
+      "component": "src\\app\\page.tsx",
+      "description": "Missing error handling UI in src\\app\\page.tsx",
+      "type": "note",
+      "note": "Add error state and user-friendly error message"
+    },
+    {
+      "issueId": "ui-a11y-src\\app\\page.tsx",
+      "severity": "low",
+      "component": "src\\app\\page.tsx",
+      "description": "Missing ARIA attributes in src\\app\\page.tsx",
+      "type": "note",
+      "note": "Add aria-label or aria-labelledby to buttons"
+    }
+  ],
+  "requireReview": [
+    {
+      "issueId": "api-missing-compliance-route.ts",
+      "severity": "high",
+      "component": "api/compliance/route.ts",
+      "description": "Missing API endpoint: compliance/route.ts",
+      "type": "file_create",
+      "path": "src/app/api/compliance/route.ts",
+      "template": "api_route",
+      "methods": [
+        "GET",
+        "POST"
+      ]
+    }
+  ]
+}

@@ -364,15 +364,24 @@ export class CaptureAgent {
       },
       upcomingDeadlines: opportunities
         .filter(o => o.responseDeadline && o.responseDeadline > new Date())
+        // Sort by deadline (soonest first) before taking top 10
+        .sort((a, b) => (a.responseDeadline?.getTime() || 0) - (b.responseDeadline?.getTime() || 0))
         .slice(0, 10)
-        .map(o => ({
-          id: o.id,
-          title: o.title,
-          deadline: o.responseDeadline,
-          daysRemaining: Math.floor(
-            ((o.responseDeadline?.getTime() || 0) - Date.now()) / (1000 * 60 * 60 * 24)
-          ),
-        })),
+        .map(o => {
+          // Calculate days remaining using day precision
+          const now = new Date();
+          now.setHours(0, 0, 0, 0);
+          const deadline = new Date(o.responseDeadline!);
+          deadline.setHours(0, 0, 0, 0);
+          const daysRemaining = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          
+          return {
+            id: o.id,
+            title: o.title,
+            deadline: o.responseDeadline,
+            daysRemaining,
+          };
+        }),
     };
   }
 

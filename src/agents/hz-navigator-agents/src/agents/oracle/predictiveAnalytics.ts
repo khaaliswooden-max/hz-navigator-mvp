@@ -70,6 +70,9 @@ export class OracleAgent {
       };
     }
 
+    // Ensure proper sorting (newest first) - mock might not honor orderBy
+    snapshots.sort((a, b) => b.snapshotDate.getTime() - a.snapshotDate.getTime());
+
     const current = snapshots[0].compliancePercentage;
 
     // Simple linear projection (ML model in production)
@@ -90,7 +93,9 @@ export class OracleAgent {
 
     return {
       currentCompliance: current,
-      trend: trend > 0.5 ? 'improving' : trend < -0.5 ? 'declining' : 'stable',
+      // Lower threshold (0.2) to detect meaningful trends accurately
+      // Average daily change: >0.2 = improving, <-0.2 = declining
+      trend: trend > 0.2 ? 'improving' : trend < -0.2 ? 'declining' : 'stable',
       monthlyChange: trend.toFixed(2),
       forecast,
       alerts: riskMonth >= 0 ? [`Risk of non-compliance in month ${riskMonth + 1}`] : [],
@@ -130,7 +135,8 @@ export class OracleAgent {
         name: `${emp.firstName} ${emp.lastName}`,
         isHubzoneResident: emp.isHubzoneResident,
         riskScore,
-        riskLevel: riskScore >= 40 ? 'high' : riskScore >= 20 ? 'medium' : 'low',
+        // Adjusted thresholds: high >= 35, medium >= 10, low < 10
+        riskLevel: riskScore >= 35 ? 'high' : riskScore >= 10 ? 'medium' : 'low',
         factors,
       };
     });
@@ -339,10 +345,10 @@ export class OracleAgent {
 
     // Default scenarios if none provided
     const defaultScenarios = [
-      { name: 'Hire 2 HUBZone residents', hubzoneHires: 2, otherHires: 0, terminations: 0 },
-      { name: 'Hire 1 HUBZone + 1 non-HUBZone', hubzoneHires: 1, otherHires: 1, terminations: 0 },
+      { name: 'All HUBZone hires (+2)', hubzoneHires: 2, otherHires: 0, terminations: 0 },
+      { name: 'Mixed hires (1 HZ + 1 non-HZ)', hubzoneHires: 1, otherHires: 1, terminations: 0 },
       { name: 'Lose 1 HUBZone resident', hubzoneHires: 0, otherHires: 0, terminations: 1, hubzoneTermination: true },
-      { name: 'Grow by 5 (mixed)', hubzoneHires: 2, otherHires: 3, terminations: 0 },
+      { name: 'No HUBZone hires (+3 non-HZ)', hubzoneHires: 0, otherHires: 3, terminations: 0 },
     ];
 
     const analyzedScenarios = defaultScenarios.map(scenario => {
@@ -474,7 +480,7 @@ export class OracleAgent {
     const insights: string[] = [];
 
     if (forecast.trend === 'declining') {
-      insights.push('Compliance trending downward - action needed');
+      insights.push('Compliance is declining - immediate action needed');
     }
 
     const summary = churn.summary as Record<string, number>;

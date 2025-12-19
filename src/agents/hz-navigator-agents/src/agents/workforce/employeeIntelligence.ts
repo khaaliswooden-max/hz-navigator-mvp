@@ -114,6 +114,7 @@ export class WorkforceAgent {
       orderBy: [{ isActive: 'desc' }, { lastName: 'asc' }],
     });
 
+    // Map to roster format first
     const roster: EmployeeRecord[] = employees.map((e) => ({
       id: e.id,
       firstName: e.firstName,
@@ -135,6 +136,17 @@ export class WorkforceAgent {
         atRisk: e.atRiskRedesignation || false,
       },
     }));
+
+    // Sort roster in-memory to ensure consistent ordering (active first, then by lastName)
+    // This ensures proper ordering even when mock doesn't honor Prisma's orderBy
+    roster.sort((a, b) => {
+      // Active employees first (true > false)
+      if (a.isActive !== b.isActive) {
+        return a.isActive ? -1 : 1;
+      }
+      // Then by lastName ascending
+      return a.lastName.localeCompare(b.lastName);
+    });
 
     const stats = {
       total: employees.length,
@@ -397,24 +409,37 @@ export class WorkforceAgent {
       where: { organizationId, isActive: true, isHubzoneResident: true },
     });
 
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-
+    // Calculate days at day precision (ignore time component)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
     const qualified: string[] = [];
     const pending: Array<{ id: string; name: string; daysRemaining: number }> = [];
 
     for (const emp of employees) {
-      if (!emp.residencyStartDate || emp.residencyStartDate <= ninetyDaysAgo) {
+      if (!emp.residencyStartDate) {
+        // No start date = assumed qualified (legacy handling)
         qualified.push(emp.id);
       } else {
-        const daysRemaining = Math.ceil(
-          (emp.residencyStartDate.getTime() - ninetyDaysAgo.getTime()) / (24 * 60 * 60 * 1000)
+        // Calculate days of residency
+        const startDate = new Date(emp.residencyStartDate);
+        startDate.setHours(0, 0, 0, 0);
+        
+        const daysOfResidency = Math.floor(
+          (today.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)
         );
-        pending.push({
-          id: emp.id,
-          name: `${emp.firstName} ${emp.lastName}`,
-          daysRemaining,
-        });
+        
+        // Must have MORE than 90 days (91+ days to qualify)
+        if (daysOfResidency > 90) {
+          qualified.push(emp.id);
+        } else {
+          const daysRemaining = 91 - daysOfResidency;
+          pending.push({
+            id: emp.id,
+            name: `${emp.firstName} ${emp.lastName}`,
+            daysRemaining: Math.max(1, daysRemaining),
+          });
+        }
       }
     }
 

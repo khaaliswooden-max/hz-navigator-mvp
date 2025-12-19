@@ -449,11 +449,18 @@ export class CartographAgent {
 
     console.log(`[CARTOGRAPH] Geocoding: ${address}`);
 
+    // Normalize address: uppercase, remove newlines/tabs, collapse multiple spaces
+    const normalizedAddress = address
+      .toUpperCase()
+      .replace(/[\n\r\t]/g, ' ')  // Replace newlines and tabs with spaces
+      .replace(/\s+/g, ' ')        // Collapse multiple spaces to single space
+      .trim();                      // Remove leading/trailing whitespace
+
     // Parse address components (simplified)
-    const parts = address.split(',').map(p => p.trim());
+    const parts = normalizedAddress.split(',').map(p => p.trim());
 
     return {
-      normalizedAddress: address.toUpperCase(),
+      normalizedAddress,
       street: parts[0] || '',
       city: parts[1] || '',
       state: parts[2]?.split(' ')[0] || '',
