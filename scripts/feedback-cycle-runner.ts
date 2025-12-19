@@ -187,7 +187,7 @@ async function runSentinelSelfTest(
     // Test 1: Compliance calculation
     const result = await sentinel.execute('calculate_compliance', {}, org.id);
 
-    if (result.percentage === undefined) {
+    if (result.percentage == null) {
       feedback.push(createFeedback(cycleNumber, 'SENTINEL', 'calculate_compliance', 'bug', 'critical',
         'Compliance calculation returns no percentage',
         'Returns percentage between 0-100',
