@@ -102,6 +102,8 @@ export default function DashboardPage() {
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400"
+            aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            aria-expanded={sidebarOpen}
           >
             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -195,9 +197,12 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="p-2 rounded-lg hover:bg-slate-100 text-slate-400 relative">
+            <button 
+              className="p-2 rounded-lg hover:bg-slate-100 text-slate-400 relative"
+              aria-label="View notifications (1 new)"
+            >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-critical rounded-full" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-critical rounded-full" aria-hidden="true" />
             </button>
             <div className="w-9 h-9 rounded-full bg-hz-500 flex items-center justify-center text-white font-semibold text-sm">
               VB

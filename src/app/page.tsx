@@ -65,6 +65,18 @@ export default function LandingPage() {
   const [demoAddress, setDemoAddress] = useState('');
   const [demoResult, setDemoResult] = useState<null | { isHubzone: boolean; type?: string }>(null);
   const [isChecking, setIsChecking] = useState(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [pageError, setPageError] = useState<string | null>(null);
+
+  // Mark page as loaded after initial render
+  useEffect(() => {
+    try {
+      setIsPageLoaded(true);
+    } catch (error) {
+      setPageError('Failed to load page. Please refresh.');
+      console.error('Page load error:', error);
+    }
+  }, []);
 
   // Stats counters
   const contractorsCounter = useCounter(2500, 2000);
@@ -98,11 +110,14 @@ export default function LandingPage() {
     },
   ];
 
+  const [demoError, setDemoError] = useState<string | null>(null);
+
   const handleDemoCheck = async () => {
     if (!demoAddress.trim()) return;
     
     setIsChecking(true);
     setDemoResult(null);
+    setDemoError(null);
     
     // Use actual API
     try {
@@ -114,14 +129,18 @@ export default function LandingPage() {
           type: data.hubzoneType,
         });
       } else {
-        // Fallback mock
+        // Fallback mock for demo purposes
+        const isHubzone = demoAddress.toLowerCase().includes('huntsville') || 
+                          demoAddress.toLowerCase().includes('baltimore') ||
+                          Math.random() > 0.4;
         setDemoResult({
-          isHubzone: Math.random() > 0.4,
-          type: ['QCT', 'QNMC', 'DDA'][Math.floor(Math.random() * 3)],
+          isHubzone,
+          type: isHubzone ? ['QCT', 'QNMC', 'DDA'][Math.floor(Math.random() * 3)] : undefined,
         });
       }
-    } catch {
-      // Mock fallback
+    } catch (error) {
+      console.error('Demo check error:', error);
+      // Mock fallback for demo
       const isHubzone = demoAddress.toLowerCase().includes('huntsville') || 
                         demoAddress.toLowerCase().includes('baltimore') ||
                         Math.random() > 0.5;
@@ -132,6 +151,40 @@ export default function LandingPage() {
     }
     setIsChecking(false);
   };
+
+  // Show error state
+  if (pageError) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center p-8">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+            <X className="w-8 h-8 text-red-400" />
+          </div>
+          <h1 className="text-xl font-semibold text-white mb-2">Something went wrong</h1>
+          <p className="text-slate-400 mb-4">{pageError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-medium transition-colors"
+            aria-label="Refresh page"
+          >
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state
+  if (!isPageLoaded) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-slate-400">Loading HZ Navigator...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
@@ -189,6 +242,8 @@ export default function LandingPage() {
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 text-slate-400 hover:text-white"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -334,6 +389,7 @@ export default function LandingPage() {
                   onClick={handleDemoCheck}
                   disabled={isChecking || !demoAddress.trim()}
                   className="px-8 py-4 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:cursor-not-allowed rounded-xl font-semibold transition-all flex items-center justify-center gap-2 min-w-[160px]"
+                  aria-label="Check HUBZone status for entered address"
                 >
                   {isChecking ? (
                     <>
@@ -659,7 +715,10 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <button className="block w-full py-3 text-center bg-white/10 hover:bg-white/15 rounded-xl font-medium transition-colors">
+              <button 
+                className="block w-full py-3 text-center bg-white/10 hover:bg-white/15 rounded-xl font-medium transition-colors"
+                aria-label="Contact sales for enterprise pricing"
+              >
                 Contact Sales
               </button>
             </div>

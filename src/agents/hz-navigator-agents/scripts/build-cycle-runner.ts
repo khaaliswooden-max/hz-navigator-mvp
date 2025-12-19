@@ -89,7 +89,8 @@ async function runSentinelSelfTest(prisma: PrismaClient): Promise<AgentSelfTestR
       // Test 1: Compliance calculation
       testsRun++;
       const result = await sentinel.execute('calculate_compliance', {}, org.id);
-      if (result.percentage !== undefined) {
+      // Agent returns compliancePercentage, not percentage
+      if (result.compliancePercentage !== undefined) {
         testsPassed++;
       } else {
         feedback.push({
@@ -98,7 +99,7 @@ async function runSentinelSelfTest(prisma: PrismaClient): Promise<AgentSelfTestR
           category: 'bug',
           severity: 'critical',
           description: 'Compliance calculation returns no percentage',
-          expectedBehavior: 'Returns percentage between 0-100',
+          expectedBehavior: 'Returns compliancePercentage between 0-100',
           actualBehavior: `Returns: ${JSON.stringify(result)}`,
           reproductionSteps: ['Call calculate_compliance'],
           inputData: { organizationId: org.id },
@@ -112,17 +113,18 @@ async function runSentinelSelfTest(prisma: PrismaClient): Promise<AgentSelfTestR
       testsRun++;
       if (result.alerts && Array.isArray(result.alerts)) {
         testsPassed++;
-        const nonActionable = (result.alerts as Array<Record<string, unknown>>).filter(a => !a.recommendedAction);
+        // Alerts use suggestedAction, not recommendedAction
+        const nonActionable = (result.alerts as Array<Record<string, unknown>>).filter(a => !a.suggestedAction);
         if (nonActionable.length > 0) {
           feedback.push({
             agentSource: 'SENTINEL',
             taskType: 'generate_alerts',
             category: 'ux_issue',
             severity: 'medium',
-            description: `${nonActionable.length} alert(s) without recommended actions`,
+            description: `${nonActionable.length} alert(s) without suggested actions`,
             expectedBehavior: 'All alerts include actionable next steps',
-            actualBehavior: 'Some alerts lack recommendations',
-            reproductionSteps: ['Generate compliance alerts', 'Check recommendedAction field'],
+            actualBehavior: 'Some alerts lack suggestions',
+            reproductionSteps: ['Generate compliance alerts', 'Check suggestedAction field'],
             inputData: {},
             outputData: { nonActionableCount: nonActionable.length },
             status: 'open',
@@ -176,7 +178,9 @@ async function runCartographSelfTest(prisma: PrismaClient): Promise<AgentSelfTes
       const testAddress = '100 F Street NE, Washington, DC 20549';
       const result = await cartograph.execute('verify_address', { address: testAddress }, org.id);
       
-      if (result.isHubzone !== undefined) {
+      // Agent returns hubzoneStatus.isHubzone nested in the result
+      const hubzoneStatus = result.hubzoneStatus as Record<string, unknown> | undefined;
+      if (hubzoneStatus?.isHubzone !== undefined) {
         testsPassed++;
       } else {
         feedback.push({
@@ -185,7 +189,7 @@ async function runCartographSelfTest(prisma: PrismaClient): Promise<AgentSelfTes
           category: 'bug',
           severity: 'high',
           description: 'Address verification missing HUBZone status',
-          expectedBehavior: 'Returns isHubzone boolean',
+          expectedBehavior: 'Returns hubzoneStatus.isHubzone boolean',
           actualBehavior: `Returns: ${JSON.stringify(result)}`,
           reproductionSteps: ['Call verify_address with valid address'],
           inputData: { address: testAddress },
@@ -301,21 +305,22 @@ async function runWorkforceSelfTest(prisma: PrismaClient): Promise<AgentSelfTest
     const org = await prisma.organization.findFirst();
 
     if (org) {
-      // Test 1: List employees
+      // Test 1: Get roster (the correct method name, not list_employees)
       testsRun++;
-      const result = await workforce.execute('list_employees', {}, org.id);
-      if (result.employees !== undefined) {
+      const result = await workforce.execute('get_roster', {}, org.id);
+      // Agent returns { roster, stats }, not { employees }
+      if (result.roster !== undefined) {
         testsPassed++;
       } else {
         feedback.push({
           agentSource: 'WORKFORCE',
-          taskType: 'list_employees',
+          taskType: 'get_roster',
           category: 'bug',
           severity: 'high',
-          description: 'List employees returns no data',
-          expectedBehavior: 'Returns employee array',
+          description: 'Get roster returns no data',
+          expectedBehavior: 'Returns roster array with employee data',
           actualBehavior: `Returns: ${JSON.stringify(result)}`,
-          reproductionSteps: ['Call list_employees'],
+          reproductionSteps: ['Call get_roster'],
           inputData: { organizationId: org.id },
           outputData: result as Record<string, unknown>,
           status: 'open',
