@@ -6,9 +6,12 @@ node_modules/
 # Build
 .next/
 out/
-build/
+/build/
 dist/
 *.tsbuildinfo
+
+# Except hz-navigator build system source code
+!src/agents/hz-navigator-agents/src/build/
 
 # Environment
 .env

@@ -448,7 +448,7 @@ export class CaptureAgent {
     return {
       requirements: requirements.length,
       matched: matches.length,
-      gaps: gaps.length,
+      gapCount: gaps.length,
       matchRate: requirements.length > 0 ? (matches.length / requirements.length) * 100 : 0,
       matches,
       gaps,

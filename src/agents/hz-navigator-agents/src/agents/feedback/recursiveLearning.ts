@@ -414,27 +414,27 @@ export class FeedbackAgent {
    */
   async updateResolution(
     feedbackId: string,
-    resolution: Partial<FeedbackEntry['resolution']>
+    resolution?: Partial<FeedbackEntry['resolution']>
   ): Promise<Record<string, unknown>> {
     const updated = await this.prisma.feedbackLog.update({
       where: { id: feedbackId },
       data: {
-        resolutionStatus: resolution.status,
-        buildVersion: resolution.buildVersion,
-        commitHash: resolution.commitHash,
-        changeDescription: resolution.changeDescription,
-        resolvedAt: resolution.status === 'resolved' ? new Date() : undefined,
-        verifiedBy: resolution.verifiedBy,
+        resolutionStatus: resolution?.status,
+        buildVersion: resolution?.buildVersion,
+        commitHash: resolution?.commitHash,
+        changeDescription: resolution?.changeDescription,
+        resolvedAt: resolution?.status === 'resolved' ? new Date() : undefined,
+        verifiedBy: resolution?.verifiedBy,
       },
     });
 
     // Log the resolution as a learning event
-    if (resolution.status === 'resolved') {
+    if (resolution?.status === 'resolved') {
       await this.prisma.learningEvent.create({
         data: {
           eventType: 'feedback_resolved',
           inputData: { feedbackId },
-          outputData: resolution as Prisma.InputJsonValue,
+          outputData: (resolution ?? {}) as Prisma.InputJsonValue,
           outcome: 'success',
         },
       });
@@ -443,8 +443,8 @@ export class FeedbackAgent {
     return {
       success: true,
       feedbackId,
-      newStatus: resolution.status,
-      buildVersion: resolution.buildVersion,
+      newStatus: resolution?.status,
+      buildVersion: resolution?.buildVersion,
     };
   }
 

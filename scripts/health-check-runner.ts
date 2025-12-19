@@ -464,10 +464,11 @@ export const phase2HealthChecks: PhaseHealthCheck = {
           }
 
           const result = await guardian.execute('assess_audit_readiness', {}, org.id);
+          const scores = result.scores as { overall?: number } | undefined;
 
           return {
-            passed: typeof result.scores?.overall === 'number',
-            details: `Audit readiness: ${result.scores?.overall || 'N/A'}%`,
+            passed: typeof scores?.overall === 'number',
+            details: `Audit readiness: ${scores?.overall || 'N/A'}%`,
           };
         } catch (e: unknown) {
           return { passed: false, details: `Failed: ${(e as Error).message}` };

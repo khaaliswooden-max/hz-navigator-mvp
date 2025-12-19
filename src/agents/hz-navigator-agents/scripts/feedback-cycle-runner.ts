@@ -10,7 +10,7 @@
  * 6. Log learning events
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import {
   HealthCheckRunner,
   phase1HealthChecks,
@@ -383,8 +383,8 @@ export async function runFeedbackCycle(
       await prisma.learningEvent.create({
         data: {
           eventType: 'feedback_cycle',
-          inputData: feedback.inputData,
-          outputData: feedback.outputData,
+          inputData: feedback.inputData as Prisma.InputJsonValue,
+          outputData: feedback.outputData as Prisma.InputJsonValue,
           outcome: feedback.status,
           metadata: {
             cycleNumber,
@@ -392,7 +392,7 @@ export async function runFeedbackCycle(
             severity: feedback.severity,
             category: feedback.category,
             agentSource: feedback.agentSource,
-          },
+          } as Prisma.InputJsonValue,
         },
       });
     } catch {

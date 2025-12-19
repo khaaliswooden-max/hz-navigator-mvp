@@ -112,25 +112,18 @@ async function handleVerifyAddress(
     geocodeResult.stateFips
   );
 
-  // Step 3: Store verification result
-  if (organizationId) {
+  // Step 3: Store verification result (only if employeeId is provided - schema requires it)
+  if (employeeId) {
     try {
       await prisma.addressVerification.create({
         data: {
-          employeeId: employeeId || null,
-          streetAddress: geocodeResult.streetAddress || address,
-          city: geocodeResult.city || '',
-          state: geocodeResult.state || '',
-          zipCode: geocodeResult.zipCode || '',
-          fullAddress: geocodeResult.matchedAddress,
+          employeeId,
+          address: geocodeResult.matchedAddress || address,
+          verifiedAt: new Date(),
           isHubzone: hubzoneStatus.isHubzone,
-          hubzoneType: hubzoneStatus.primaryType,
-          hubzoneTypes: hubzoneStatus.types,
+          hubzoneType: hubzoneStatus.primaryType ?? undefined,
           censusTract: geocodeResult.censusTract,
-          county: geocodeResult.county,
-          latitude: geocodeResult.latitude,
-          longitude: geocodeResult.longitude,
-          verificationSource: 'CENSUS_API',
+          source: 'CARTOGRAPH',
           confidence: geocodeResult.confidence,
         },
       });

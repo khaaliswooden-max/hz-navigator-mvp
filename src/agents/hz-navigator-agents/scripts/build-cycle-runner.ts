@@ -723,4 +723,5 @@ if (require.main === module) {
 }
 
 // Export for programmatic use
-export { runBuildCycle, FullCycleResult };
+export { runBuildCycle };
+export type { FullCycleResult };

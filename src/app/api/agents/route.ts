@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { executeAgentTask, agentTasks, AgentType } from '@/lib/agents';
+import { executeAgentTask, agentTasks, AgentTypeLocal } from '@/lib/agents';
 
 // GET: List all agents and their capabilities
 export async function GET() {
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'taskType is required',
-          availableTasks: agentTasks[agentType as AgentType] || [],
+          availableTasks: agentTasks[agentType as AgentTypeLocal] || [],
         },
         { status: 400 }
       );
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate task type
-    const validTasks = agentTasks[agentType as AgentType];
+    const validTasks = agentTasks[agentType as AgentTypeLocal];
     if (!validTasks.includes(taskType)) {
       return NextResponse.json(
         { 
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
 
     // Execute the task
     const result = await executeAgentTask(
-      agentType as AgentType,
+      agentType as AgentTypeLocal,
       taskType,
       input,
       organizationId
