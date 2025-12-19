@@ -512,17 +512,18 @@ async function runGuardianSelfTest(
 
     // Test 1: Audit readiness assessment
     const readiness = await guardian.execute('assess_audit_readiness', {}, org.id);
+    const scores = readiness.scores as { overall?: number } | undefined;
 
-    if (readiness.scores?.overall === undefined) {
+    if (scores?.overall === undefined) {
       feedback.push(createFeedback(cycleNumber, 'GUARDIAN', 'assess_audit_readiness', 'bug', 'high',
         'Audit readiness returns no overall score',
         'Returns overall score 0-100 with breakdown',
         `Returns: ${JSON.stringify(readiness).substring(0, 200)}`, {}));
-    } else if (readiness.scores.overall < 0 || readiness.scores.overall > 100) {
+    } else if (scores.overall < 0 || scores.overall > 100) {
       feedback.push(createFeedback(cycleNumber, 'GUARDIAN', 'assess_audit_readiness', 'data_quality', 'medium',
-        `Invalid audit readiness score: ${readiness.scores.overall}`,
+        `Invalid audit readiness score: ${scores.overall}`,
         'Score should be between 0 and 100',
-        `Got: ${readiness.scores.overall}`, {}));
+        `Got: ${scores.overall}`, {}));
     }
 
     // Test 2: Audit trail verification
