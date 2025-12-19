@@ -18,6 +18,7 @@ model Organization {
   name            String
   einNumber       String?   @unique
   dunsNumber      String?
+  uei             String?   // Unique Entity ID (replaced DUNS)
   cageCode        String?
   hubzoneNumber   String?   // SBA HUBZone certification number
   createdAt       DateTime  @default(now())
@@ -31,6 +32,13 @@ model Organization {
   agentTasks          AgentTask[]
   complianceSnapshots ComplianceSnapshot[]
   complianceAlerts    ComplianceAlert[]
+  
+  // Additional agent relations
+  contractOpportunities ContractOpportunity[]
+  teamingPartners       TeamingPartner[]
+  attemptToMaintain     AttemptToMaintain[]
+  complianceEvents      ComplianceEvent[]
+  documents             Document[]
 }
 
 // Employee records for residency tracking
@@ -63,11 +71,13 @@ model Employee {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  addressVerifications AddressVerification[]
   
   @@index([organizationId])
   @@index([isHubzoneResident])
   @@index([isLegacyEmployee])
+  @@index([organizationId, isActive])
 }
 
 // Business locations
@@ -309,4 +319,369 @@ model HubzoneMapChange {
   @@index([censusTract])
   @@index([changeType])
   @@index([effectiveDate])
+}
+
+// ============================================================================
+// CAPTURE AGENT - Contract Opportunities
+// ============================================================================
+
+model ContractOpportunity {
+  id                  String    @id @default(cuid())
+  organizationId      String
+  organization        Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  // Core opportunity data
+  title               String
+  agency              String
+  noticeId            String
+  setAside            String    // hubzone, hubzone_sole, 8a, sdvosb, wosb, small_business, full_open
+  estimatedValue      Float?
+  responseDeadline    DateTime?
+  naicsCode           String?
+  placeOfPerformance  String?
+  description         String?   @db.Text
+  
+  // Status tracking
+  status              String?   @default("discovered") // discovered, analyzing, qualified, pursuing, bid_submitted, won, lost, no_bid
+  matchScore          Float?
+  winProbability      Float?
+  
+  // Analysis data
+  analysisData        Json?
+  bidDecision         Json?
+  
+  // Contract details
+  isRecompete         Boolean   @default(false)
+  incumbentName       String?
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([organizationId, noticeId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([setAside])
+  @@index([responseDeadline])
+}
+
+// ============================================================================
+// DIPLOMAT AGENT - Teaming Partners
+// ============================================================================
+
+model TeamingPartner {
+  id              String    @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  name            String
+  cageCode        String?
+  uei             String?
+  
+  certifications  String[]  // Array of certification types
+  capabilities    String[]  // Array of capability areas
+  
+  status          String    @default("prospect") // prospect, contacted, active, inactive
+  synergyScore    Float     @default(0)
+  
+  contactName     String?
+  contactEmail    String?
+  contactPhone    String?
+  
+  notes           String?   @db.Text
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+}
+
+// ============================================================================
+// ADVOCATE AGENT - Regulatory Updates
+// ============================================================================
+
+model RegulatoryUpdate {
+  id              String    @id @default(cuid())
+  
+  source          String    // SBA, Federal Register, etc.
+  title           String
+  category        String    // rule_change, guidance, policy, announcement
+  
+  effectiveDate   DateTime?
+  summary         String    @db.Text
+  fullText        String?   @db.Text
+  
+  impact          String    // high, medium, low
+  affectedAreas   String[]  // compliance, hiring, certification, etc.
+  actionRequired  Boolean   @default(false)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([effectiveDate])
+  @@index([impact])
+  @@index([category])
+}
+
+// ============================================================================
+// GUARDIAN AGENT - Audit Support Models
+// ============================================================================
+
+// Attempt to Maintain documentation (for grace period)
+model AttemptToMaintain {
+  id              String    @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  actionType      String    // hiring_effort, relocation_assistance, job_posting, partnership, etc.
+  description     String    @db.Text
+  evidence        String?   @db.Text
+  documentedBy    String?
+  
+  createdAt       DateTime  @default(now())
+
+  @@index([organizationId])
+  @@index([actionType])
+  @@index([createdAt])
+}
+
+// Address verification records
+model AddressVerification {
+  id              String    @id @default(cuid())
+  employeeId      String
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  address         String
+  verifiedAt      DateTime
+  isHubzone       Boolean
+  hubzoneType     String?
+  censusTract     String?
+  
+  source          String    // SBA_API, manual, CARTOGRAPH
+  confidence      Float?
+  
+  createdAt       DateTime  @default(now())
+
+  @@index([employeeId])
+  @@index([verifiedAt])
+}
+
+// Compliance event log
+model ComplianceEvent {
+  id              String    @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  eventType       String    // hire, termination, address_change, verification, status_change
+  details         Json
+  source          String    // SENTINEL, WORKFORCE, GUARDIAN, etc.
+  
+  createdAt       DateTime  @default(now())
+
+  @@index([organizationId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// ARCHIVIST AGENT - Document Management
+// ============================================================================
+
+model Document {
+  id              String    @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  title           String
+  type            String    // compliance_report, employee_roster, certification_package, audit_package, etc.
+  content         String?   @db.Text
+  metadata        Json?
+  tags            String[]
+  
+  fileUrl         String?   // For uploaded documents
+  fileSize        Int?
+  mimeType        String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([organizationId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// FEEDBACK LOOP SYSTEM MODELS
+// ============================================================================
+
+// Feedback Log - Captures all feedback from stress tests, user interactions, and agent executions
+model FeedbackLog {
+  id                String   @id @default(cuid())
+  
+  // Source identification
+  sourceType        String   // stress_test, user_interaction, agent_execution, external_api
+  agentId           String   // Which agent generated/received feedback
+  taskType          String   // What task was being executed
+  scenarioId        String?  // For stress tests
+  organizationId    String?  // If org-specific
+  
+  // Execution details
+  executionInput    Json?
+  executionOutput   Json?
+  executionTimeMs   Int?
+  executionSuccess  Boolean  @default(true)
+  errorMessage      String?
+  
+  // Feedback classification
+  category          String   // performance, accuracy, ux, edge_case, bug, compliance, security
+  severity          String   // critical, high, medium, low
+  description       String   @db.Text
+  expectedBehavior  String?
+  actualBehavior    String   @db.Text
+  userImpact        String?
+  
+  // Resolution tracking
+  resolutionStatus  String   @default("open") // open, in_progress, resolved, wont_fix, deferred
+  buildVersion      String?
+  commitHash        String?
+  changeDescription String?
+  resolvedAt        DateTime?
+  verifiedBy        String?
+  
+  // Impact assessment
+  usersAffected     Int      @default(0)
+  complianceRisk    Boolean  @default(false)
+  dataIntegrityRisk Boolean  @default(false)
+  securityRisk      Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([agentId])
+  @@index([category])
+  @@index([severity])
+  @@index([resolutionStatus])
+  @@index([createdAt])
+}
+
+// Agent Execution Log - Tracks every agent execution for analytics
+model AgentExecution {
+  id              String   @id @default(cuid())
+  agentId         String
+  taskType        String
+  organizationId  String?
+  
+  input           Json
+  output          Json?
+  executionTimeMs Int
+  success         Boolean  @default(true)
+  errorMessage    String?
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([agentId])
+  @@index([taskType])
+  @@index([organizationId])
+  @@index([createdAt])
+  @@index([success])
+}
+
+// Stress Test Run - Records each stress test execution
+model StressTestRun {
+  id            String   @id @default(cuid())
+  scenarioId    String
+  scenarioName  String
+  agentId       String
+  
+  totalTests    Int
+  passed        Int
+  failed        Int
+  passRate      Float
+  
+  results       Json     // Detailed test results
+  
+  executedBy    String?  // User or system
+  createdAt     DateTime @default(now())
+  
+  @@index([agentId])
+  @@index([scenarioId])
+  @@index([createdAt])
+}
+
+// Build Iteration - Tracks each build cycle and its associated feedback
+model BuildIteration {
+  id              String   @id @default(cuid())
+  version         String   @unique
+  commitHash      String?
+  
+  // What feedback drove this build
+  feedbackResolved Json    // Array of feedback IDs
+  issuesFixed      Int     @default(0)
+  
+  // Build metadata
+  deployedAt       DateTime?
+  deployedBy       String?
+  environment      String?  // dev, staging, production
+  
+  // Verification
+  stressTestsPassed Boolean @default(false)
+  verificationNotes String?
+  
+  createdAt        DateTime @default(now())
+  
+  @@index([version])
+  @@index([deployedAt])
+}
+
+// Improvement Pattern - Detected patterns for proactive improvement
+model ImprovementPattern {
+  id              String   @id @default(cuid())
+  patternType     String   // recurring_error, performance_degradation, edge_case_gap
+  
+  agentId         String
+  description     String   @db.Text
+  occurrences     Int      @default(1)
+  lastOccurrence  DateTime
+  
+  // Resolution
+  resolved        Boolean  @default(false)
+  resolvedInBuild String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([agentId])
+  @@index([patternType])
+  @@index([resolved])
+}
+
+// User Feedback - Direct user feedback from UI
+model UserFeedback {
+  id              String   @id @default(cuid())
+  organizationId  String
+  userId          String?
+  
+  // Context
+  pageUrl         String?
+  agentInvolved   String?
+  taskInvolved    String?
+  
+  // Feedback content
+  type            String   // bug, feature_request, ux_issue, praise, other
+  rating          Int?     // 1-5
+  message         String   @db.Text
+  
+  // Response
+  acknowledged    Boolean  @default(false)
+  respondedAt     DateTime?
+  responseMessage String?
+  
+  // Linkage
+  feedbackLogId   String?  // If converted to formal feedback log
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([organizationId])
+  @@index([type])
+  @@index([createdAt])
 }

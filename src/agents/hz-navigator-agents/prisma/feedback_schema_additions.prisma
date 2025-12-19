@@ -1,0 +1,191 @@
+// ============================================
+// FEEDBACK LOOP SCHEMA ADDITIONS
+// Add these models to your existing schema.prisma
+// ============================================
+
+// Feedback Log - Captures all feedback from stress tests, user interactions, and agent executions
+model FeedbackLog {
+  id                String   @id @default(cuid())
+  
+  // Source identification
+  sourceType        String   // stress_test, user_interaction, agent_execution, external_api
+  agentId           String   // Which agent generated/received feedback
+  taskType          String   // What task was being executed
+  scenarioId        String?  // For stress tests
+  organizationId    String?  // If org-specific
+  
+  // Execution details
+  executionInput    Json?
+  executionOutput   Json?
+  executionTimeMs   Int?
+  executionSuccess  Boolean  @default(true)
+  errorMessage      String?
+  
+  // Feedback classification
+  category          String   // performance, accuracy, ux, edge_case, bug, compliance, security
+  severity          String   // critical, high, medium, low
+  description       String
+  expectedBehavior  String?
+  actualBehavior    String
+  userImpact        String?
+  
+  // Resolution tracking
+  resolutionStatus  String   @default("open") // open, in_progress, resolved, wont_fix, deferred
+  buildVersion      String?
+  commitHash        String?
+  changeDescription String?
+  resolvedAt        DateTime?
+  verifiedBy        String?
+  
+  // Impact assessment
+  usersAffected     Int      @default(0)
+  complianceRisk    Boolean  @default(false)
+  dataIntegrityRisk Boolean  @default(false)
+  securityRisk      Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([agentId])
+  @@index([category])
+  @@index([severity])
+  @@index([resolutionStatus])
+  @@index([createdAt])
+}
+
+// Agent Execution Log - Tracks every agent execution for analytics
+model AgentExecution {
+  id              String   @id @default(cuid())
+  agentId         String
+  taskType        String
+  organizationId  String?
+  
+  input           Json
+  output          Json?
+  executionTimeMs Int
+  success         Boolean  @default(true)
+  errorMessage    String?
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([agentId])
+  @@index([taskType])
+  @@index([organizationId])
+  @@index([createdAt])
+  @@index([success])
+}
+
+// Stress Test Run - Records each stress test execution
+model StressTestRun {
+  id            String   @id @default(cuid())
+  scenarioId    String
+  scenarioName  String
+  agentId       String
+  
+  totalTests    Int
+  passed        Int
+  failed        Int
+  passRate      Float
+  
+  results       Json     // Detailed test results
+  
+  executedBy    String?  // User or system
+  createdAt     DateTime @default(now())
+  
+  @@index([agentId])
+  @@index([scenarioId])
+  @@index([createdAt])
+}
+
+// Build Iteration - Tracks each build cycle and its associated feedback
+model BuildIteration {
+  id              String   @id @default(cuid())
+  version         String   @unique
+  commitHash      String?
+  
+  // What feedback drove this build
+  feedbackResolved Json    // Array of feedback IDs
+  issuesFixed      Int     @default(0)
+  
+  // Build metadata
+  deployedAt       DateTime?
+  deployedBy       String?
+  environment      String?  // dev, staging, production
+  
+  // Verification
+  stressTestsPassed Boolean @default(false)
+  verificationNotes String?
+  
+  createdAt        DateTime @default(now())
+  
+  @@index([version])
+  @@index([deployedAt])
+}
+
+// Improvement Pattern - Detected patterns for proactive improvement
+model ImprovementPattern {
+  id              String   @id @default(cuid())
+  patternType     String   // recurring_error, performance_degradation, edge_case_gap
+  
+  agentId         String
+  description     String
+  occurrences     Int      @default(1)
+  lastOccurrence  DateTime
+  
+  // Resolution
+  resolved        Boolean  @default(false)
+  resolvedInBuild String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([agentId])
+  @@index([patternType])
+  @@index([resolved])
+}
+
+// User Feedback - Direct user feedback from UI
+model UserFeedback {
+  id              String   @id @default(cuid())
+  organizationId  String
+  userId          String?
+  
+  // Context
+  pageUrl         String?
+  agentInvolved   String?
+  taskInvolved    String?
+  
+  // Feedback content
+  type            String   // bug, feature_request, ux_issue, praise, other
+  rating          Int?     // 1-5
+  message         String
+  
+  // Response
+  acknowledged    Boolean  @default(false)
+  respondedAt     DateTime?
+  responseMessage String?
+  
+  // Linkage
+  feedbackLogId   String?  // If converted to formal feedback log
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([organizationId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ============================================
+// INDEXES FOR EXISTING MODELS (add if not present)
+// ============================================
+
+// Add to ComplianceSnapshot
+// @@index([organizationId, snapshotDate])
+
+// Add to Employee
+// @@index([organizationId, isActive])
+// @@index([isHubzoneResident])
+
+// Add to LearningEvent
+// @@index([eventType])
+// @@index([createdAt])

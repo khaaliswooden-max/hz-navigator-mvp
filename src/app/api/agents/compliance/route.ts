@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getNexusOrchestrator } from '@/agents/nexus/orchestrator';
+import { getSentinelAgent } from '@/lib/agents';
 
 // GET: Fetch latest compliance snapshot
 export async function GET(request: NextRequest) {
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { organizationId } = body;
+    const { organizationId, taskType = 'calculate_compliance', ...input } = body;
 
     if (!organizationId) {
       return NextResponse.json(
@@ -56,27 +56,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get NEXUS orchestrator and dispatch task to SENTINEL
-    const nexus = getNexusOrchestrator();
-    
-    const result = await nexus.createTask({
-      agentType: 'sentinel',
-      taskType: 'calculate_compliance',
-      input: {},
-      organizationId,
-      priority: 1,
-    });
+    // Execute SENTINEL agent task directly
+    const sentinel = getSentinelAgent();
+    const result = await sentinel.execute(taskType, input, organizationId);
 
     return NextResponse.json({
       success: true,
-      message: 'Compliance calculation completed',
-      taskId: result.id,
-      result: result.output,
+      agent: 'sentinel',
+      taskType,
+      result,
     });
   } catch (error) {
     console.error('Compliance POST error:', error);
     return NextResponse.json(
-      { error: 'Failed to calculate compliance' },
+      { error: error instanceof Error ? error.message : 'Failed to calculate compliance' },
       { status: 500 }
     );
   }

@@ -172,55 +172,55 @@ export class NexusOrchestrator {
   ): Promise<Record<string, unknown>> {
     switch (agentType) {
       case 'sentinel': {
-        const { SentinelAgent } = await import('../hz-navigator-agents/src/agents/sentinel/complianceMonitor');
+        const { SentinelAgent } = await import('../sentinel/complianceMonitor');
         const agent = new SentinelAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
 
       case 'cartograph': {
-        const { CartographAgent } = await import('../hz-navigator-agents/src/agents/cartograph/geospatialIntelligence');
+        const { CartographAgent } = await import('../cartograph/geospatialIntelligence');
         const agent = new CartographAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
 
       case 'workforce': {
-        const { WorkforceAgent } = await import('../hz-navigator-agents/src/agents/workforce/employeeIntelligence');
+        const { WorkforceAgent } = await import('../workforce/employeeIntelligence');
         const agent = new WorkforceAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
 
       case 'capture': {
-        const { CaptureAgent } = await import('../hz-navigator-agents/src/agents/capture/opportunityScanner');
+        const { CaptureAgent } = await import('../capture/opportunityScanner');
         const agent = new CaptureAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
 
       case 'advocate': {
-        const { AdvocateAgent } = await import('../hz-navigator-agents/src/agents/advocate/regulatoryIntelligence');
+        const { AdvocateAgent } = await import('../advocate/regulatoryIntelligence');
         const agent = new AdvocateAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
 
       case 'guardian': {
-        const { GuardianAgent } = await import('../hz-navigator-agents/src/agents/guardian/auditDefense');
+        const { GuardianAgent } = await import('../guardian/auditDefense');
         const agent = new GuardianAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
 
       case 'diplomat': {
-        const { DiplomatAgent } = await import('../hz-navigator-agents/src/agents/diplomat/partnershipIntelligence');
+        const { DiplomatAgent } = await import('../diplomat/partnershipIntelligence');
         const agent = new DiplomatAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
 
       case 'oracle': {
-        const { OracleAgent } = await import('../hz-navigator-agents/src/agents/oracle/predictiveAnalytics');
+        const { OracleAgent } = await import('../oracle/predictiveAnalytics');
         const agent = new OracleAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
 
       case 'archivist': {
-        const { ArchivistAgent } = await import('../hz-navigator-agents/src/agents/archivist/documentIntelligence');
+        const { ArchivistAgent } = await import('../archivist/documentIntelligence');
         const agent = new ArchivistAgent(this.prisma);
         return await agent.execute(taskType, input, organizationId);
       }
@@ -317,94 +317,29 @@ export class NexusOrchestrator {
 
     return tasks;
   }
+}
 
-  /**
-   * Process pending tasks in the queue
-   */
-  async processQueue(batchSize: number = 10): Promise<number> {
-    const pendingTasks = await this.prisma.agentTask.findMany({
-      where: { status: 'pending' },
-      orderBy: [{ priority: 'asc' }, { createdAt: 'asc' }],
-      take: batchSize,
-    });
+// Singleton instance
+let nexusInstance: NexusOrchestrator | null = null;
+let prismaInstance: PrismaClient | null = null;
 
-    let processed = 0;
-
-    for (const task of pendingTasks) {
-      try {
-        await this.dispatchTask(task.id);
-        processed++;
-      } catch (error) {
-        console.error(`[NEXUS] Failed to process task ${task.id}:`, error);
-      }
+/**
+ * Get or create NEXUS orchestrator singleton
+ */
+export function getNexusOrchestrator(): NexusOrchestrator {
+  if (!nexusInstance) {
+    if (!prismaInstance) {
+      prismaInstance = new PrismaClient();
     }
-
-    return processed;
+    nexusInstance = new NexusOrchestrator(prismaInstance);
   }
+  return nexusInstance;
+}
 
-  /**
-   * Get queue statistics
-   */
-  async getQueueStats(): Promise<{
-    pending: number;
-    processing: number;
-    completed: number;
-    failed: number;
-  }> {
-    const [pending, processing, completed, failed] = await Promise.all([
-      this.prisma.agentTask.count({ where: { status: 'pending' } }),
-      this.prisma.agentTask.count({ where: { status: 'processing' } }),
-      this.prisma.agentTask.count({ where: { status: 'completed' } }),
-      this.prisma.agentTask.count({ where: { status: 'failed' } }),
-    ]);
-
-    return { pending, processing, completed, failed };
-  }
-
-  /**
-   * Health check for the orchestrator
-   */
-  async healthCheck(): Promise<{
-    status: 'healthy' | 'unhealthy';
-    database: string;
-    pendingTasks: number;
-    failedTasksLastHour: number;
-    timestamp: string;
-  }> {
-    try {
-      // Check database connectivity
-      await this.prisma.$queryRaw`SELECT 1`;
-
-      // Get pending task count
-      const pendingTasks = await this.prisma.agentTask.count({
-        where: { status: 'pending' },
-      });
-
-      // Get failed tasks in last hour
-      const failedTasksLastHour = await this.prisma.agentTask.count({
-        where: {
-          status: 'failed',
-          completedAt: {
-            gte: new Date(Date.now() - 60 * 60 * 1000),
-          },
-        },
-      });
-
-      return {
-        status: 'healthy',
-        database: 'connected',
-        pendingTasks,
-        failedTasksLastHour,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      return {
-        status: 'unhealthy',
-        database: 'disconnected',
-        pendingTasks: 0,
-        failedTasksLastHour: 0,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
+/**
+ * Initialize NEXUS with a specific Prisma instance
+ */
+export function initNexus(prisma: PrismaClient): NexusOrchestrator {
+  nexusInstance = new NexusOrchestrator(prisma);
+  return nexusInstance;
 }
