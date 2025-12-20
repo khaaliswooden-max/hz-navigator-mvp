@@ -736,3 +736,32 @@ model SecurityPostureSnapshot {
   @@index([organizationId])
   @@index([snapshotDate])
 }
+
+// Security Audit Log - Zero Trust policy decisions audit trail
+model SecurityAuditLog {
+  id               String   @id @default(cuid())
+  eventId          String   @unique
+  eventType        String   // access_decision, policy_violation, etc.
+  
+  subjectId        String?  // User ID
+  organizationId   String?
+  
+  resourceType     String?
+  resourceId       String?
+  action           String?
+  decision         String   // allow, deny, challenge
+  riskScore        Float?
+  
+  ipAddress        String?
+  userAgent        String?
+  policyViolations String[] // Array of policy violations
+  contextData      Json?    // Additional context
+  
+  timestamp        DateTime @default(now())
+  createdAt        DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([eventType])
+  @@index([decision])
+  @@index([timestamp])
+}
