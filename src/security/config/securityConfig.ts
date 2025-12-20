@@ -14,7 +14,7 @@
 export type Environment = 'development' | 'staging' | 'production' | 'fedramp';
 
 export const getEnvironment = (): Environment => {
-  const env = process.env.NODE_ENV || 'development';
+  const env: string = process.env.NODE_ENV || 'development';
   const fedrampMode = process.env.FEDRAMP_MODE === 'true';
   
   if (fedrampMode) return 'fedramp';
