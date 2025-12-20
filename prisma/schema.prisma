@@ -685,3 +685,54 @@ model UserFeedback {
   @@index([type])
   @@index([createdAt])
 }
+
+// ============================================================================
+// CENTURION AGENT - Security Compliance Models
+// ============================================================================
+
+// Security Finding - Tracks security issues and vulnerabilities
+model SecurityFinding {
+  id              String    @id @default(cuid())
+  organizationId  String
+  
+  controlId       String    // Reference to security control (e.g., AC.L2-3.1.1)
+  title           String
+  description     String    @db.Text
+  severity        String    // critical, high, medium, low, informational
+  status          String    @default("open") // open, in_progress, remediated, risk_accepted, false_positive
+  
+  discoveredAt    DateTime  @default(now())
+  dueDate         DateTime?
+  resolvedAt      DateTime?
+  
+  evidence        String?   @db.Text
+  affectedAssets  String[]
+  remediation     Json?     // RemediationPlan object
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([severity])
+  @@index([controlId])
+}
+
+// Security Posture Snapshot - Point-in-time security posture records
+model SecurityPostureSnapshot {
+  id               String   @id @default(cuid())
+  organizationId   String
+  
+  overallScore     Int
+  frameworkScores  Json     // Record<ComplianceFramework, number>
+  openFindings     Int
+  criticalFindings Int
+  riskLevel        String   // low, medium, high, critical
+  
+  snapshotDate     DateTime @default(now())
+  
+  createdAt        DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([snapshotDate])
+}
