@@ -1,0 +1,724 @@
+// ============================================================================
+// FEDRAMP / CMMC / SLED RAMP COMPLIANCE SCHEMA ADDITIONS
+// ============================================================================
+// 
+// These models extend the HZ Navigator schema to support:
+// - FedRAMP Moderate authorization requirements
+// - CMMC 2.0 Level 2 compliance tracking
+// - StateRAMP / SLED RAMP state-level equivalents
+// - Zero Trust Architecture audit trails
+// - FCL (Facility Clearance) readiness tracking
+//
+// Add these models to your main schema.prisma file
+// ============================================================================
+
+// ============================================================================
+// SECURITY AUDIT LOGGING (FedRAMP AU-* / CMMC AU.L2-*)
+// ============================================================================
+
+// Comprehensive security event audit log
+model SecurityAuditLog {
+  id              String    @id @default(cuid())
+  
+  // Event identification
+  eventId         String    @unique
+  eventType       String    // access_decision, authentication, configuration_change, data_access, etc.
+  eventCategory   String    // security, authentication, authorization, system, data
+  
+  // Subject (who)
+  subjectId       String
+  organizationId  String
+  sessionId       String?
+  
+  // Resource (what)
+  resourceType    String
+  resourceId      String
+  
+  // Action (how)
+  action          String
+  decision        String    // allow, deny, challenge, step_up
+  
+  // Context
+  ipAddress       String
+  userAgent       String?
+  geoLocation     Json?     // { country, region, city }
+  deviceId        String?
+  networkType     String?   // corporate_vpn, public_network, etc.
+  
+  // Risk assessment
+  riskScore       Float     @default(0)
+  trustLevel      String?   // verified, high, medium, low, untrusted
+  policyViolations String[] // Array of policy violations
+  
+  // Additional context
+  contextData     Json?
+  
+  // Integrity protection
+  eventHash       String?   // SHA-256 hash for integrity verification
+  previousHash    String?   // Link to previous event for chain integrity
+  
+  // Timestamps
+  timestamp       DateTime  @default(now())
+  processedAt     DateTime?
+  
+  @@index([organizationId])
+  @@index([subjectId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@index([decision])
+  @@index([riskScore])
+}
+
+// Authentication events (IA controls)
+model AuthenticationEvent {
+  id              String    @id @default(cuid())
+  
+  userId          String
+  organizationId  String?
+  sessionId       String?
+  
+  eventType       String    // login, logout, mfa_challenge, mfa_verify, password_change, token_refresh
+  status          String    // success, failure, challenge, locked
+  
+  // Authentication factors used
+  primaryFactor   String    // password, sso, certificate
+  secondaryFactor String?   // totp, webauthn, sms, email
+  factorCount     Int       @default(1)
+  
+  // Failure details
+  failureReason   String?
+  failureCount    Int       @default(0)
+  lockoutTriggered Boolean  @default(false)
+  
+  // Context
+  ipAddress       String
+  userAgent       String?
+  deviceId        String?
+  geoCountry      String?
+  
+  // Risk indicators
+  anomalyScore    Float     @default(0)
+  riskIndicators  String[]
+  
+  timestamp       DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([organizationId])
+  @@index([eventType])
+  @@index([status])
+  @@index([timestamp])
+}
+
+// Session management (AC-12)
+model UserSession {
+  id              String    @id @default(cuid())
+  
+  userId          String
+  organizationId  String
+  
+  // Session metadata
+  sessionToken    String    @unique
+  deviceId        String?
+  ipAddress       String
+  userAgent       String?
+  
+  // MFA status
+  mfaVerified     Boolean   @default(false)
+  mfaVerifiedAt   DateTime?
+  
+  // Trust scoring
+  trustLevel      String    @default("low")
+  riskScore       Float     @default(50)
+  
+  // Lifecycle
+  createdAt       DateTime  @default(now())
+  lastActivityAt  DateTime  @default(now())
+  expiresAt       DateTime
+  terminatedAt    DateTime?
+  terminationReason String?
+  
+  // Status
+  isActive        Boolean   @default(true)
+  
+  @@index([userId])
+  @@index([organizationId])
+  @@index([sessionToken])
+  @@index([expiresAt])
+  @@index([isActive])
+}
+
+// ============================================================================
+// SECURITY FINDINGS & POA&M (FedRAMP CA-5 / CMMC CA.L2-*)
+// ============================================================================
+
+// Security findings from assessments
+model SecurityFinding {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  // Finding identification
+  findingNumber   String?   // e.g., V-12345
+  controlId       String    // e.g., AC.L2-3.1.1
+  framework       String    // fedramp, cmmc, stateramp, nist_800_171
+  
+  // Details
+  title           String
+  description     String    @db.Text
+  severity        String    // critical, high, medium, low, informational
+  category        String    // vulnerability, misconfiguration, policy_violation, etc.
+  
+  // Impact
+  affectedAssets  String[]
+  riskRating      Float     @default(0)
+  exploitability  String?   // high, medium, low
+  
+  // Evidence
+  evidence        String?   @db.Text
+  screenshotUrl   String?
+  
+  // Remediation
+  status          String    @default("open") // open, in_progress, remediated, risk_accepted, false_positive
+  remediation     Json?     // { steps, estimatedEffort, milestones }
+  assignedTo      String?
+  
+  // Dates
+  discoveredAt    DateTime  @default(now())
+  dueDate         DateTime?
+  resolvedAt      DateTime?
+  verifiedAt      DateTime?
+  verifiedBy      String?
+  
+  // Source
+  source          String    // automated_scan, manual_assessment, penetration_test, audit
+  assessorId      String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([controlId])
+  @@index([severity])
+  @@index([status])
+  @@index([framework])
+  @@index([discoveredAt])
+}
+
+// Plan of Action and Milestones (POA&M)
+model POAMItem {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  findingId       String?   // Link to SecurityFinding
+  
+  // Identification
+  poamNumber      String    // e.g., POAM-2024-001
+  controlId       String
+  framework       String
+  
+  // Weakness
+  weaknessName    String
+  weaknessDescription String @db.Text
+  severity        String
+  
+  // Impact
+  securityCategorization String // high, moderate, low
+  affectedSystems String[]
+  
+  // Remediation
+  remediationPlan String    @db.Text
+  milestones      Json      // Array of { date, description, status }
+  resourcesRequired String?
+  estimatedCost   Float?
+  
+  // Responsibility
+  responsiblePOC  String
+  responsibleOrg  String?
+  
+  // Status tracking
+  status          String    @default("open") // open, in_progress, delayed, completed, risk_accepted
+  percentComplete Int       @default(0)
+  
+  // Dates
+  identifiedDate  DateTime
+  scheduledCompletionDate DateTime
+  actualCompletionDate DateTime?
+  originalDueDate DateTime?
+  
+  // Risk acceptance (if applicable)
+  riskAcceptedBy  String?
+  riskAcceptedDate DateTime?
+  riskAcceptanceJustification String?
+  
+  // Audit trail
+  comments        Json?     // Array of { date, author, comment }
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([controlId])
+  @@index([status])
+  @@index([severity])
+  @@index([scheduledCompletionDate])
+}
+
+// ============================================================================
+// SECURITY POSTURE & CONTINUOUS MONITORING
+// ============================================================================
+
+// Security posture snapshots
+model SecurityPostureSnapshot {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  // Scores
+  overallScore    Float
+  frameworkScores Json      // { cmmc: 85, fedramp: 90, ... }
+  
+  // Findings summary
+  openFindings    Int       @default(0)
+  criticalFindings Int      @default(0)
+  highFindings    Int       @default(0)
+  
+  // Risk assessment
+  riskLevel       String    // critical, high, medium, low
+  riskTrend       String?   // increasing, stable, decreasing
+  
+  // Threat indicators
+  activeThreats   Int       @default(0)
+  recentIncidents Int       @default(0)
+  
+  // Control coverage
+  controlCoverage Float     @default(0) // Percentage
+  automatedControls Int     @default(0)
+  manualControls  Int       @default(0)
+  
+  snapshotDate    DateTime  @default(now())
+  
+  @@index([organizationId])
+  @@index([snapshotDate])
+  @@index([riskLevel])
+}
+
+// Continuous monitoring events
+model ContinuousMonitoringEvent {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  eventType       String    // vulnerability_scan, config_check, access_review, etc.
+  source          String    // automated, manual, external
+  
+  // Results
+  status          String    // completed, failed, in_progress
+  findingsCount   Int       @default(0)
+  criticalCount   Int       @default(0)
+  
+  // Details
+  summary         String?
+  details         Json?
+  reportUrl       String?
+  
+  // Schedule
+  scheduledAt     DateTime?
+  startedAt       DateTime
+  completedAt     DateTime?
+  nextScheduled   DateTime?
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([organizationId])
+  @@index([eventType])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// ============================================================================
+// COMPLIANCE FRAMEWORK TRACKING
+// ============================================================================
+
+// Compliance authorization status
+model ComplianceAuthorization {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  framework       String    // fedramp, cmmc, stateramp_tx, etc.
+  level           String    // fedramp_moderate, cmmc_l2, etc.
+  
+  // Authorization status
+  status          String    // planning, assessment, authorized, continuous_monitoring, expired
+  
+  // Authorization details
+  authorizationType String? // ATO, P-ATO, JAB, Agency
+  authorizingOfficial String?
+  authorizingAgency String?
+  
+  // Dates
+  applicationDate DateTime?
+  assessmentStartDate DateTime?
+  assessmentEndDate DateTime?
+  authorizationDate DateTime?
+  expirationDate  DateTime?
+  
+  // Assessor
+  assessorOrg     String?   // 3PAO, C3PAO, etc.
+  assessorLead    String?
+  
+  // Documents
+  sspVersion      String?
+  sapVersion      String?
+  sarVersion      String?
+  
+  // Metrics
+  controlsAssessed Int      @default(0)
+  controlsPassed  Int       @default(0)
+  controlsFailed  Int       @default(0)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@unique([organizationId, framework])
+  @@index([organizationId])
+  @@index([framework])
+  @@index([status])
+}
+
+// Control implementation evidence
+model ControlEvidence {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  controlId       String    // e.g., AC.L2-3.1.1
+  framework       String
+  
+  // Evidence details
+  evidenceType    String    // policy, procedure, screenshot, log, attestation
+  title           String
+  description     String?
+  
+  // Storage
+  fileUrl         String?
+  fileHash        String?   // SHA-256 for integrity
+  
+  // Validity
+  collectedAt     DateTime  @default(now())
+  validFrom       DateTime  @default(now())
+  validUntil      DateTime?
+  
+  // Verification
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([controlId])
+  @@index([framework])
+  @@index([collectedAt])
+}
+
+// ============================================================================
+// CUI (CONTROLLED UNCLASSIFIED INFORMATION) TRACKING
+// ============================================================================
+
+// CUI data classification
+model CUIAsset {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  // Asset identification
+  assetName       String
+  assetType       String    // database_table, file, api_endpoint, etc.
+  assetLocation   String    // Path or identifier
+  
+  // Classification
+  cuiCategory     String    // SP-FEDCON, SP-PRVCY, etc.
+  cuiSubcategory  String?
+  markingBanner   String    // Full CUI marking string
+  
+  // Handling
+  handlingInstructions String?
+  disseminationControl String? // NOFORN, etc.
+  
+  // Protection requirements
+  encryptionRequired Boolean @default(true)
+  mfaRequired     Boolean   @default(true)
+  auditRequired   Boolean   @default(true)
+  
+  // Access control
+  authorizedRoles String[]
+  authorizedUsers String[]
+  
+  // Lifecycle
+  classifiedAt    DateTime  @default(now())
+  classifiedBy    String
+  reviewDate      DateTime?
+  declassifyDate  DateTime?
+  
+  // Status
+  isActive        Boolean   @default(true)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([cuiCategory])
+  @@index([assetType])
+}
+
+// CUI access log
+model CUIAccessLog {
+  id              String    @id @default(cuid())
+  
+  cuiAssetId      String
+  organizationId  String
+  userId          String
+  
+  // Access details
+  accessType      String    // view, download, modify, share
+  accessGranted   Boolean
+  
+  // Justification
+  justification   String?
+  approvedBy      String?
+  
+  // Context
+  ipAddress       String
+  sessionId       String?
+  
+  timestamp       DateTime  @default(now())
+  
+  @@index([cuiAssetId])
+  @@index([organizationId])
+  @@index([userId])
+  @@index([timestamp])
+}
+
+// ============================================================================
+// INCIDENT RESPONSE (IR CONTROLS)
+// ============================================================================
+
+// Security incidents
+model SecurityIncident {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  // Incident identification
+  incidentNumber  String    @unique
+  title           String
+  description     String    @db.Text
+  
+  // Classification
+  severity        String    // critical, high, medium, low
+  category        String    // malware, unauthorized_access, data_breach, etc.
+  status          String    @default("detected") // detected, analyzing, containing, eradicating, recovering, closed
+  
+  // Timeline
+  detectedAt      DateTime
+  reportedAt      DateTime?
+  containedAt     DateTime?
+  eradicatedAt    DateTime?
+  recoveredAt     DateTime?
+  closedAt        DateTime?
+  
+  // Impact
+  affectedSystems String[]
+  dataCompromised Boolean   @default(false)
+  cuiInvolved     Boolean   @default(false)
+  usersAffected   Int       @default(0)
+  
+  // Response
+  responders      String[]
+  actions         Json?     // Array of { timestamp, action, actor }
+  rootCause       String?
+  lessonsLearned  String?
+  
+  // Reporting
+  reportedToDCSA  Boolean   @default(false)
+  reportedToUSCERT Boolean  @default(false)
+  reportedToAgency Boolean  @default(false)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([severity])
+  @@index([status])
+  @@index([detectedAt])
+}
+
+// ============================================================================
+// VULNERABILITY MANAGEMENT (RA/SI CONTROLS)
+// ============================================================================
+
+// Vulnerability tracking
+model Vulnerability {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  // Identification
+  cveId           String?
+  title           String
+  description     String    @db.Text
+  
+  // Severity
+  cvssScore       Float?
+  cvssVector      String?
+  severity        String    // critical, high, medium, low
+  
+  // Affected assets
+  affectedAssets  String[]
+  affectedCount   Int       @default(1)
+  
+  // Status
+  status          String    @default("open") // open, in_progress, patched, mitigated, risk_accepted
+  
+  // Remediation
+  patchAvailable  Boolean   @default(false)
+  patchId         String?
+  remediationPlan String?
+  mitigations     String[]
+  
+  // SLA tracking
+  slaDeadline     DateTime?
+  slaMet          Boolean?
+  
+  // Discovery
+  discoveredAt    DateTime  @default(now())
+  discoverySource String    // scan, pentest, threat_intel, vendor
+  
+  // Resolution
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([cveId])
+  @@index([severity])
+  @@index([status])
+  @@index([slaDeadline])
+}
+
+// ============================================================================
+// FCL (FACILITY CLEARANCE) READINESS
+// ============================================================================
+
+// FCL requirement tracking
+model FCLRequirement {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  // Requirement details
+  category        String    // facility, personnel, it, foci
+  requirementId   String    // NISPOM reference
+  title           String
+  description     String
+  
+  // Status
+  status          String    @default("not_started") // not_started, in_progress, ready, not_applicable
+  
+  // Evidence
+  evidence        String[]
+  documentUrls    String[]
+  
+  // Review
+  lastReviewedAt  DateTime?
+  reviewedBy      String?
+  notes           String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([category])
+  @@index([status])
+}
+
+// Cleared personnel tracking (for future FCL)
+model ClearedPersonnel {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  userId          String?   // Link to user if applicable
+  
+  // Personnel info
+  lastName        String
+  firstName       String
+  middleName      String?
+  
+  // Clearance
+  clearanceLevel  String?   // confidential, secret, top_secret
+  clearanceStatus String    @default("pending") // pending, interim, final, suspended, revoked
+  
+  // Dates
+  investigationStarted DateTime?
+  clearanceGranted DateTime?
+  clearanceExpires DateTime?
+  
+  // Reinvestigation
+  nextPRDue       DateTime? // Periodic Reinvestigation
+  ceEnrolled      Boolean   @default(false) // Continuous Evaluation
+  
+  // Access
+  briefedOn       String[]  // Programs briefed on
+  debriefedFrom   String[]
+  
+  // Reporting
+  foreignTravel   Json?     // Recent foreign travel
+  foreignContacts Json?     // Foreign national contacts
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([organizationId])
+  @@index([clearanceLevel])
+  @@index([clearanceStatus])
+}
+
+// ============================================================================
+// STATE-LEVEL COMPLIANCE (SLED RAMP)
+// ============================================================================
+
+// State-specific compliance tracking
+model StateComplianceStatus {
+  id              String    @id @default(cuid())
+  
+  organizationId  String
+  
+  state           String    // TX, CA, NY, etc.
+  program         String    // TX-RAMP, CA-RAMP, StateRAMP, etc.
+  
+  // Status
+  status          String    @default("not_started") // not_started, in_progress, approved, expired
+  
+  // Certification
+  certificationDate DateTime?
+  expirationDate  DateTime?
+  certificationId String?
+  
+  // State-specific requirements
+  additionalRequirements Json? // State-specific controls beyond FedRAMP
+  
+  // Contact
+  stateContactName String?
+  stateContactEmail String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@unique([organizationId, state])
+  @@index([organizationId])
+  @@index([state])
+  @@index([status])
+}

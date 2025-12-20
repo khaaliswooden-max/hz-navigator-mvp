@@ -1,7 +1,9 @@
 /**
  * HZ Navigator Agent Constellation
  * 
- * Complete export of all 10 AI agents for HUBZone compliance automation.
+ * Complete export of all 12 AI agents for HUBZone compliance automation.
+ * 
+ * Includes FedRAMP, CMMC, StateRAMP, and FCL compliance agents.
  * 
  * Usage:
  *   import { getNexusOrchestrator } from '@/agents';
@@ -23,6 +25,10 @@ import { DiplomatAgent } from './hz-navigator-agents/src/agents/diplomat/partner
 import { OracleAgent } from './hz-navigator-agents/src/agents/oracle/predictiveAnalytics';
 import { ArchivistAgent } from './hz-navigator-agents/src/agents/archivist/documentIntelligence';
 
+// Import new security/compliance agents
+import { CenturionAgent } from './centurion/securityCompliance';
+import { WardenAgent } from './warden/fclManager';
+
 // Re-export all agent classes
 export { NexusOrchestrator } from './hz-navigator-agents/src/agents/nexus/orchestrator';
 export { SentinelAgent } from './hz-navigator-agents/src/agents/sentinel/complianceMonitor';
@@ -34,6 +40,10 @@ export { GuardianAgent } from './hz-navigator-agents/src/agents/guardian/auditDe
 export { DiplomatAgent } from './hz-navigator-agents/src/agents/diplomat/partnershipIntelligence';
 export { OracleAgent } from './hz-navigator-agents/src/agents/oracle/predictiveAnalytics';
 export { ArchivistAgent } from './hz-navigator-agents/src/agents/archivist/documentIntelligence';
+
+// Export new security/compliance agents
+export { CenturionAgent } from './centurion/securityCompliance';
+export { WardenAgent } from './warden/fclManager';
 
 // Re-export types
 export type { AgentType, TaskInput, TaskResult } from './hz-navigator-agents/src/agents/nexus/orchestrator';
@@ -69,11 +79,15 @@ export const agents = {
   diplomat: () => new DiplomatAgent(prisma),
   oracle: () => new OracleAgent(prisma),
   archivist: () => new ArchivistAgent(prisma),
+  // New security/compliance agents
+  centurion: () => new CenturionAgent(prisma),
+  warden: () => new WardenAgent(prisma),
 };
 
 /**
  * Agent Summary:
  * 
+ * CORE HUBZONE AGENTS (10):
  * 1. NEXUS - Central orchestrator, routes tasks to appropriate agents
  * 2. SENTINEL - 35% compliance monitoring, early warning, grace period tracking
  * 3. CARTOGRAPH - HUBZone boundary verification, address geocoding, map changes
@@ -84,4 +98,8 @@ export const agents = {
  * 8. DIPLOMAT - Partner discovery, synergy analysis, JV evaluation
  * 9. ORACLE - Compliance forecasting, risk prediction, trend analysis
  * 10. ARCHIVIST - Document parsing, report generation, intelligent filing
+ * 
+ * SECURITY/COMPLIANCE AGENTS (2):
+ * 11. CENTURION - Security compliance monitoring (FedRAMP, CMMC, StateRAMP, Zero Trust)
+ * 12. WARDEN - FCL (Facility Clearance) management, NISPOM compliance, DCSA readiness
  */
